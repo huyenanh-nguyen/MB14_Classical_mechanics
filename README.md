@@ -8,4 +8,6 @@ This Repo contains this following experiments:
   * Thomson Model
   * Prism spectrometer
 
+I hope you enjoy it and it helps you to understand the experiments better.
+
 
