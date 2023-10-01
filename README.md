@@ -8,6 +8,4 @@ This Repo contains this following experiments:
   * Thomson Model
   * Prism spectrometer
 
-I hope you enjoy it and it helps you to understand the experiments better.
-
-
+The Instructor of this course recommended to use QtilPlot for the data analysis. But I think Python will do the job. This Repo is basically just for me and protocolling ever process on Git.
