@@ -1,1 +1,1 @@
-from .statistical_measurment import Statistics
+from .statistical_measurments import Statistics

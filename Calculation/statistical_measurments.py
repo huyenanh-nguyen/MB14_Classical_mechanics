@@ -52,9 +52,9 @@ class Statistics:
         return std_dev
 
 
-    def std_dev_mean(self):
-        """actually.. I dont really know the purpose of this.. but i guess the standard deviation is divided by the
-        root of the number of values
+    def confidence_interval(self):
+        """well... they call it "standard deviation of the mean" but I guess they meant confidence interval..
+        But I am not quite sure..
 
         Args:
             value_set (list or array): one dimensional set of values
