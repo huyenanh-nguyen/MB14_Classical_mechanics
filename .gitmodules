@@ -1,0 +1,3 @@
+[submodule "Pendulum/MathKit"]
+	path = Pendulum/MathKit
+	url = git@github.com:huyenanh-nguyen/MathKit.git
