@@ -9,3 +9,11 @@ def test_turning_point_stats():
     test = Pendulum(excelpath)
     results = test.turningpoint_period_stats()
     assert results[0] == pytest.approx(1.994, 1)
+
+
+def test_shortest_period_stats():
+
+    excelpath = PurePath(str(Path.cwd()) + "/F3_Fadenpendel.xlsx")
+    test = Pendulum(excelpath)
+    results = test.shortest_period_stats()
+    assert results[0] == pytest.approx(1.994, 1)

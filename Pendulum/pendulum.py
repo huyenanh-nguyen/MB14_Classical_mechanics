@@ -2,11 +2,10 @@ from MathKit.statsengine import Statistics
 import pandas as pd
 import numpy as np
 from numpy import sqrt
-from pathlib import Path, PurePath
 import matplotlib.pyplot as plt
 from scipy.interpolate import approximate_taylor_polynomial
 from scipy.optimize import curve_fit
-import argparse
+from pathlib import Path, PurePath
 
 class Pendulum:
     """
@@ -45,6 +44,9 @@ class Pendulum:
 
         return [task1_excelsheeet, task3a_excelsheet, task3b_excelsheet]
 
+    ############################
+    #         task 1           #
+    ############################ 
 
     def equilibrium_period_stats(self):
         """
@@ -112,54 +114,43 @@ class Pendulum:
         stats = Statistics(excel)
 
         return stats.total_uncertainty_value(systematic_error)
+    
+    ############################
+    #         task 3           #
+    ############################
+
+    # measuring 10 Periods 10 times for the longest and shortest pendulum length
+    # Index 1 will be the longest length and Index 10 will be the shortest length
+    # each period must be divided by 10 and then can be use here.
+    # the largest standard deviation will be use for the rest of the length 
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description = "Pendulum")
-    parser.add_argument("excelpath", type = str, help = "Path to the Excelfile")
-    parser.add_argument("time_systematic_error", type = float, help = "Systematic error of the offset from my instrument. In this case the last digit of the timer")
-    args = parser.parse_args()  # collects all arguments
+    def shortest_period_stats(self):
 
-    excelpath = PurePath(str(Path.cwd()) + "/" + (args.excelpath))
-    time_systematic_error = args.time_systematic_error
+        excel = self.excel_to_df()[1]["Tkürzeste,10 durch 10 in s"]
+        stats = Statistics(excel)
 
-    test = Pendulum(excelpath)
-    task1 = test.excel_to_df()[0]
-    task3a = test.excel_to_df()[1]
-    task3b = test.excel_to_df()[2]
+        period_mean = stats.std_mean() 
+        period_stddev = stats.std_dev() 
+        period_cov = stats.confidence_interval() 
 
-    print("Task 1: ")
-    print("Mean of Period at the equilibrium point: ", test.equilibrium_period_stats()[0], "s")
-    print("Standard deviation of the mean: ", test.equilibrium_period_stats()[1], "s")
-    print("Confidence interval of the mean: ", test.equilibrium_period_stats()[2], "s")
-    print("Total uncertainty of the period at the equilibrium point: ", test.equilibrium_period_total_err(time_systematic_error), "s")
-    print("Mean of Period at the turning point: ", test.turningpoint_period_stats()[0], "s")
-    print("Standard deviation of the mean: ", test.turningpoint_period_stats()[1], "s")
-    print("Confidence interval of the mean: ", test.turningpoint_period_stats()[2], "s")
-    print("Total uncertainty of the period at the turning point: ", test.turningpoint_period_total_err(time_systematic_error), "s")
-    print("    ")
-    print("Task 3a: ")
-    print("Mean of Period at the equilibrium point: ", test.equilibrium_period_stats()[0], "s")
-    print("Standard deviation of the mean: ", test.equilibrium_period_stats()[1], "s")
-    print("Confidence interval of the mean: ", test.equilibrium_period_stats()[2], "s")
-    print("Total uncertainty of the period at the equilibrium point: ", test.equilibrium_period_total_err(time_systematic_error), "s")
-    print("    ")
-    print("Task 3b: ")
-    print("Mean of Period at the turning point: ", test.turningpoint_period_stats()[0], "s")
-    print("Standard deviation of the mean: ", test.turningpoint_period_stats()[1], "s")
+        return [period_mean, period_stddev, period_cov]
+    
 
+    def longest_period_stats(self):
 
+        excel = self.excel_to_df()[1]["Tlängste,1 durch 10 in s"]
+        stats = Statistics(excel)
 
+        period_mean = stats.std_mean() 
+        period_stddev = stats.std_dev()
+        period_cov = stats.confidence_interval() 
 
+        return [period_mean, period_stddev, period_cov]
+    
 
-
-
-
-
-
-
-
-
-
+    # measuring 10 periods for 10 different pendulum length
+    # I guess calculating the Errors would be easier if it is made in excel
+    # so here will be the part where we just plot the grapf
 
 
