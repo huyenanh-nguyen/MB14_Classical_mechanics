@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 from numpy import sqrt
 import matplotlib.pyplot as plt
-from pathlib import PurePath, Path
 from scipy.interpolate import approximate_taylor_polynomial
 from scipy.optimize import curve_fit
 
@@ -47,7 +46,7 @@ class Pendulum:
 
     def equilibrium_period_stats(self):
         """
-        Calculation the neccessary statistical parameters for the Period at the equilibrium point.
+        Calculation the neccessary random statistical parameters for the Period at the equilibrium point.
 
         Returns:
             List: [Mean of Period at the equilibrium point, standard deviation of the mean, confidence interval of the mean]
@@ -63,9 +62,25 @@ class Pendulum:
         return [period_mean, period_stddev, period_cov]
     
 
+    def equilibrium_period_total_err(self, systematic_error):
+        """calculating the total uncertainty of the period at the equilibrium point
+
+        Args:
+            systematic_error (int, value): systematic error of the offset from my instrument. In this case the last digit of the timer
+
+        Returns:
+            Int: total uncertainty of the period at the equilibrium point
+        """
+
+        excel = self.excel_to_df()[0]["T(Nullpunkt) in s"]
+        stats = Statistics(excel)
+
+        return stats.total_uncertainty_value(systematic_error)
+    
+
     def turningpoint_period_stats(self):
         """
-        Calculation the neccessary statistical parameters for the Period at the turning point.
+        Calculation the neccessary random statistical parameters for the Period at the turning point.
 
         Returns:
             List: [Mean of Period at the turning point, standard deviation of the mean, confidence interval of the mean]
@@ -79,14 +94,32 @@ class Pendulum:
         period_cov = stats.confidence_interval()
 
         return [period_mean, period_stddev, period_cov]
+    
+
+    def turningpoint_period_total_err(self, systematic_error):
+        """calculating the total uncertainty of the period at the turning point
+
+        Args:
+            systematic_error (int, value): systematic error of the offset from my instrument. In this case the last digit of the timer
+
+        Returns:
+            Int: total uncertainty of the period at the turning point
+        """
+
+        excel = self.excel_to_df()[0]["T(Umkehrpunkt) in s"]
+        stats = Statistics(excel)
+
+        return stats.total_uncertainty_value(systematic_error)
+
+
+    
 
 
 
 
-excelpath = PurePath(str(Path.cwd()) + "/Pendulum/F3_Fadenpendel.xlsx")
-test = Pendulum(excelpath)
-print(test.equilibrium_period_stats())
-print(test.turningpoint_period_stats())
+
+
+
 
 
 
