@@ -248,7 +248,7 @@ class Pendulum:
         ax = fig.add_subplot()
         plt.scatter(x = length, y = square_period, marker = ".")
         plt.plot(length, gravity(length, grav), label = 'uhm' + u" \u00B1 " + str(np.round(1.2302, 2))) # function error of the gravity is missing!
-        plt.errorbar(length ,square_period, xerr= None, yerr = square_period_err, linestyle =' ')
+        plt.errorbar(length ,square_period, xerr= None, yerr = square_period_err, fmt='o', capsize=3, color = "slategrey")
 
         ax.secondary_xaxis('top').tick_params(axis = 'x', direction = 'out')
         ax.secondary_yaxis('right').tick_params(axis = 'y', direction = 'out')
