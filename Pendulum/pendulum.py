@@ -2,9 +2,11 @@ from MathKit.statsengine import Statistics
 import pandas as pd
 import numpy as np
 from numpy import sqrt
+from pathlib import Path, PurePath
 import matplotlib.pyplot as plt
 from scipy.interpolate import approximate_taylor_polynomial
 from scipy.optimize import curve_fit
+import argparse
 
 class Pendulum:
     """
@@ -112,7 +114,41 @@ class Pendulum:
         return stats.total_uncertainty_value(systematic_error)
 
 
-    
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description = "Pendulum")
+    parser.add_argument("excelpath", type = str, help = "Path to the Excelfile")
+    parser.add_argument("time_systematic_error", type = float, help = "Systematic error of the offset from my instrument. In this case the last digit of the timer")
+    args = parser.parse_args()  # collects all arguments
+
+    excelpath = PurePath(str(Path.cwd()) + "/" + (args.excelpath))
+    time_systematic_error = args.time_systematic_error
+
+    test = Pendulum(excelpath)
+    task1 = test.excel_to_df()[0]
+    task3a = test.excel_to_df()[1]
+    task3b = test.excel_to_df()[2]
+
+    print("Task 1: ")
+    print("Mean of Period at the equilibrium point: ", test.equilibrium_period_stats()[0], "s")
+    print("Standard deviation of the mean: ", test.equilibrium_period_stats()[1], "s")
+    print("Confidence interval of the mean: ", test.equilibrium_period_stats()[2], "s")
+    print("Total uncertainty of the period at the equilibrium point: ", test.equilibrium_period_total_err(time_systematic_error), "s")
+    print("Mean of Period at the turning point: ", test.turningpoint_period_stats()[0], "s")
+    print("Standard deviation of the mean: ", test.turningpoint_period_stats()[1], "s")
+    print("Confidence interval of the mean: ", test.turningpoint_period_stats()[2], "s")
+    print("Total uncertainty of the period at the turning point: ", test.turningpoint_period_total_err(time_systematic_error), "s")
+    print("    ")
+    print("Task 3a: ")
+    print("Mean of Period at the equilibrium point: ", test.equilibrium_period_stats()[0], "s")
+    print("Standard deviation of the mean: ", test.equilibrium_period_stats()[1], "s")
+    print("Confidence interval of the mean: ", test.equilibrium_period_stats()[2], "s")
+    print("Total uncertainty of the period at the equilibrium point: ", test.equilibrium_period_total_err(time_systematic_error), "s")
+    print("    ")
+    print("Task 3b: ")
+    print("Mean of Period at the turning point: ", test.turningpoint_period_stats()[0], "s")
+    print("Standard deviation of the mean: ", test.turningpoint_period_stats()[1], "s")
+
+
 
 
 
