@@ -133,50 +133,62 @@ class Pendulum:
     #         task 3           #
     ############################
 
-    # measuring 10 Periods 10 times for the longest and shortest pendulum length
-    # Index 1 will be the longest length and Index 10 will be the shortest length
-    # each period must be divided by 10 and then can be use here.
-    # the largest standard deviation will be use for the rest of the length 
+    # measuring 5 periods for 12 different pendulum length
 
+    # pendulum length:
 
-    def shortest_period_stats(self):
+    def stringlength_error(self, guessingerror):
         """
-        Calculating random errors of the period from the shortest pendulum length
+        Args:
+            guessingerror (float): how accurate can we measure the length? 
 
         Returns:
-            List: [mean of period, standard deviation, confidence interval]
+            List: for each length -> the uncertainty
         """
-        excel = self.excel_to_df()[1]["Tkürzeste,10 durch 10 in s"]
-        stats = Statistics(excel)
 
-        period_mean = stats.std_mean() 
-        period_stddev = stats.std_dev() 
-        period_cov = stats.confidence_interval() 
+        accu_class = self.excel_to_df()[2]["∆liEG in mm"]
 
-        return [period_mean, period_stddev, period_cov]
+        error_string = [np.sqrt((accu_class[i]**2) + (guessingerror**2)) for i in range(len(accu_class))]
+        return error_string
     
 
-    def longest_period_stats(self):
-        """
-        Calculating random errors of the period from the longest pendulum length
+    def total_length_error(self, guessingerror, guess_zero_length):
+        """summing up the total error of the length
+
+        Args:
+            guessingerror (float): how accurate can we measure the length?
+            guess_zero_length (float): how accurate can we measure the length of the pendulum from the center of mass?
 
         Returns:
-            List: [mean of period, standard deviation, confidence interval]
+            List: total error of the length
         """
 
-        excel = self.excel_to_df()[1]["Tlängste,1 durch 10 in s"]
-        stats = Statistics(excel)
+        error_string = self.stringlength_error(guessingerror)
 
-        period_mean = stats.std_mean() 
-        period_stddev = stats.std_dev()
-        period_cov = stats.confidence_interval() 
+        total_error = [np.sqrt((1*error_string[i])**2 + (1* guess_zero_length)**2) for i in range(len(error_string))]
+        return total_error
 
-        return [period_mean, period_stddev, period_cov]
-    
+    # period:
 
-    # measuring 10 periods for 10 different pendulum length
-    # I guess calculating the Errors would be easier if it is made in excel
-    # so here will be the part where we just plot the graph
+    def total_error_period(self, guessing_timeerror, reaction_error):
+        """_summary_
+
+        Args:
+            guessing_timeerror (float): time accuracy
+            reaction_error (float): reaction error of stopping the time
+
+        Returns:
+            List: total error of the period
+        """
+        timererror = self.excel_to_df()[2]["∆τ1Uhr in s"]
+
+        total_period_error = [np.sqrt((timererror[i]**2) + (guessing_timeerror**2) + (reaction_error**2)) for i in range(len(timererror))]
+        return total_period_error
+        
+
+
+########
+
 
     def square_period(self):
         """
