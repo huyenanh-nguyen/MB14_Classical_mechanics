@@ -52,9 +52,9 @@ class Pendulum:
         """
 
         excel = self.excel
-        task1_excelsheeet = pd.read_excel(excel, sheet_name = "Rohdaten", skiprows=2).iloc[0:10].dropna(axis = 'columns') 
-        task3a_excelsheet = pd.read_excel(excel, sheet_name = "Rohdaten", skiprows=19).iloc[0:10].dropna(axis = 'columns') 
-        task3b_excelsheet = pd.read_excel(excel, sheet_name = "Rohdaten", skiprows=52).iloc[0:10].dropna(axis = 'columns')
+        task1_excelsheeet = pd.read_excel(excel, sheet_name = "Rohdaten", skiprows=2).iloc[0:10,np.arange(1,2)] 
+        task3a_excelsheet = pd.read_excel(excel, sheet_name = "Rohdaten", skiprows=19).iloc[0:12,np.arange(1,4)] 
+        task3b_excelsheet = pd.read_excel(excel, sheet_name = "Rohdaten", skiprows=36).iloc[0:12,np.arange(1,11)]
 
         return [task1_excelsheeet, task3a_excelsheet, task3b_excelsheet]
 
@@ -262,9 +262,9 @@ class Pendulum:
 
 
 
-# excelpath = PurePath(str(Path.cwd()) + "/F3_Fadenpendel.xlsx")
+excelpath = PurePath(str(Path.cwd()) + "/F3_Fadenpendel.xlsx")
 
-# oma = Pendulum(excelpath)
-# print(oma.excel_to_df()[2])
+oma = Pendulum(excelpath)
+print(oma.excel_to_df()[2])
 
 
