@@ -52,9 +52,9 @@ class Pendulum:
         """
 
         excel = self.excel
-        task1_excelsheeet = pd.read_excel(excel, sheet_name = "Rohdaten", skiprows=2).iloc[0:10,np.arange(1,2)] 
-        task3a_excelsheet = pd.read_excel(excel, sheet_name = "Rohdaten", skiprows=19).iloc[0:12,np.arange(1,4)] 
-        task3b_excelsheet = pd.read_excel(excel, sheet_name = "Rohdaten", skiprows=36).iloc[0:12,np.arange(1,11)]
+        task1_excelsheeet = pd.read_excel(excel, sheet_name = "Rohdaten", skiprows=2).iloc[0:10,np.arange(1,3)] 
+        task3a_excelsheet = pd.read_excel(excel, sheet_name = "Rohdaten", skiprows=19).iloc[0:12,np.arange(1,5)] 
+        task3b_excelsheet = pd.read_excel(excel, sheet_name = "Rohdaten", skiprows=36).iloc[0:12,np.arange(1,12)]
 
         return [task1_excelsheeet, task3a_excelsheet, task3b_excelsheet]
 
@@ -96,6 +96,15 @@ class Pendulum:
         return stats.total_uncertainty_value(systematic_error)
     
 
+    def relative_equilibrium_error(self, systematic_error):
+        excel = self.excel_to_df()[0]["T(Nullpunkt) in s"]
+        stats = Statistics(excel)
+
+        equilibrium_relative = stats.relative_total_uncertainty(systematic_error)
+
+        return equilibrium_relative
+    
+
     def turningpoint_period_stats(self):
         """
         Calculation the neccessary random statistical parameters for the Period at the turning point.
@@ -129,6 +138,21 @@ class Pendulum:
 
         return stats.total_uncertainty_value(systematic_error)
     
+
+    def relative_turningpoint_err(self, systematic_error):
+        """percantage error (like T ± 0.1%)
+
+        Args:
+            systematic_error (float): offset of the instrument
+        """
+        
+        excel = self.excel_to_df()[0]["T(Umkehrpunkt) in s"]
+        stats = Statistics(excel)
+        turning_stdev = stats.relative_total_uncertainty(systematic_error)
+
+        return turning_stdev
+    
+
     ############################
     #         task 3           #
     ############################
@@ -167,6 +191,7 @@ class Pendulum:
 
         total_error = [np.sqrt((1*error_string[i])**2 + (1* guess_zero_length)**2) for i in range(len(error_string))]
         return total_error
+    
 
     # period:
 
@@ -186,6 +211,17 @@ class Pendulum:
         return total_period_error
         
 
+    def period_time(self):
+        """We measure the periods 5 times -> for one Period, we need to divide the time with 5
+
+        Returns:
+            List: List with the time period
+        """
+        
+        fiveperiod = self.excel_to_df()[1]["τ1 = 5 Ti in s"]
+        oneperiod = [(fiveperiod[i]/5) for i in range(len(fiveperiod))] # in this script we only measure 5 times of the period
+
+        return oneperiod
 
 ########
 
@@ -198,7 +234,7 @@ class Pendulum:
             List: period square -> for the slope
         """
         
-        period = self.excel_to_df()[2]["Ti(mean)"] 
+        period = self.period_time()
 
         square_period = [period[i]**2 for i in range(len(period))]
 
@@ -251,7 +287,7 @@ class Pendulum:
 
         grav = self.fit_points()[0]
         square_period = self.square_period()
-        square_period_err = self.square_period_error()
+        # square_period_err = self.square_period_error()
         length = self.excel_to_df()[2]["li,ges in m"]
 
 
@@ -259,8 +295,8 @@ class Pendulum:
         fig = plt.figure()
         ax = fig.add_subplot()
         plt.scatter(x = length, y = square_period, marker = ".")
-        plt.plot(length, gravity(length, grav), label = 'uhm' + u" \u00B1 " + str(np.round(1.2302, 2))) # function error of the gravity is missing!
-        plt.errorbar(length ,square_period, xerr= None, yerr = square_period_err, fmt='o', capsize=3, color = "slategrey")
+        plt.plot(length, gravity(length, grav), label = grav) # function error of the gravity is missing!
+        # plt.errorbar(length ,square_period, xerr= None, yerr = square_period_err, fmt='o', capsize=3, color = "slategrey")
 
         ax.secondary_xaxis('top').tick_params(axis = 'x', direction = 'out')
         ax.secondary_yaxis('right').tick_params(axis = 'y', direction = 'out')
@@ -275,8 +311,8 @@ class Pendulum:
 
 
 excelpath = PurePath(str(Path.cwd()) + "/F3_Fadenpendel.xlsx")
-
 oma = Pendulum(excelpath)
 print(oma.excel_to_df()[2])
+print(oma.period_time())
 
 

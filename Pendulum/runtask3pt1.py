@@ -23,16 +23,18 @@ if __name__ == "__main__":
 
     oma = Pendulum(excelpath)
 
+    digit = 3
+
     print("___________________________________________________________")
     print(" ")
     print("∆li,Faden:")
-    print(np.round(oma.stringlength_error(guessingerror_length),4))
+    print(np.round(oma.stringlength_error(guessingerror_length),digit))
     print(" ")
     print("∆li,ges:")
-    print(np.round(oma.total_length_error(guessingerror_length, guessing_zeroerror_length),4))
+    print(np.round(oma.total_length_error(guessingerror_length, guessing_zeroerror_length),digit))
     print("___________________________________________________________")
     print(" ")
     print("∆τ1, ges: ")
-    print(np.round(oma.total_error_period(guessing_timeerror, reaction_error),4))
+    print(np.round(oma.total_error_period(guessing_timeerror, reaction_error),digit))
     print(" ")
     

@@ -1,6 +1,7 @@
 import argparse
 from pathlib import Path, PurePath
 from pendulum import Pendulum
+import numpy as np
 
 # terminal script:
 
@@ -15,24 +16,27 @@ if __name__ == "__main__":
 
     oma = Pendulum(excelpath)   # oma is an acronym for our group
 
+    digit = 3
+
     print("___________________________________________________________")
     print(" ")
     print("period at equilibrium point:")
-    print("mean: ", oma.equilibrium_period_stats()[0], "s")
-    print("standard deviation: ", oma.equilibrium_period_stats()[1], "s")
-    print("confidence interval: " , oma.equilibrium_period_stats()[2], "s")
-    print("total uncertainty of period at the equilibrium point: ", oma.equilibrium_period_total_err(time_systematic_error), "s")
+    print("mean: ", np.round(oma.equilibrium_period_stats()[0], digit), "s")
+    print("standard deviation: ", np.round(oma.equilibrium_period_stats()[1], digit), "s")
+    print("confidence interval: " , np.round(oma.equilibrium_period_stats()[2], digit), "s")
+    print("total uncertainty of period at equilibrium point: ", np.round(oma.equilibrium_period_total_err(time_systematic_error), digit), "s")
     print(" ")
-    print("results period at equilibrium point: ", oma.equilibrium_period_stats()[0], u" \u00B1 ", oma.equilibrium_period_total_err(time_systematic_error), "s")
-    print(" ")
+    print("absolute results at equilibrium point: ", np.round(oma.equilibrium_period_stats()[0],digit), u" \u00B1 ", np.round(oma.equilibrium_period_total_err(time_systematic_error), digit), "s")
+    print("relative results at equilibrium point: ", np.round(oma.equilibrium_period_stats()[0],digit), u"(1 \u00B1 ",np.round(oma.relative_equilibrium_error(time_systematic_error), digit), "%) s")
     print(" ")
     print(" ")
     print("period at turning point:")
-    print("mean: ", oma.turningpoint_period_stats()[0], "s")
-    print("standard deviation: ", oma.turningpoint_period_stats()[1], "s")
-    print("confidence interval: ", oma.turningpoint_period_stats()[2], "s")
-    print("total uncertainty of period at the turning point: ", oma.turningpoint_period_total_err(time_systematic_error), "s")
+    print("mean: ", np.round(oma.turningpoint_period_stats()[0], digit), "s")
+    print("standard deviation: ", np.round(oma.turningpoint_period_stats()[1], digit), "s")
+    print("confidence interval: ", np.round(oma.turningpoint_period_stats()[2], digit), "s")
+    print("total uncertainty of period at the turning point: ", np.round(oma.turningpoint_period_total_err(time_systematic_error), digit), "s")
     print(" ")
-    print("results period at turning point: ", oma.turningpoint_period_stats()[0], u"\u00B1", oma.turningpoint_period_total_err(time_systematic_error), "s")
+    print("absolute results at equilibrium point: ", np.round(oma.turningpoint_period_stats()[0], digit), u"\u00B1", np.round(oma.turningpoint_period_total_err(time_systematic_error), digit), "s")
     print(" ")
+    print("relative results at equilibrium point: ", np.round(oma.turningpoint_period_stats()[0],digit), u"(1 \u00B1 ",np.round(oma.turningpoint_period_total_err(time_systematic_error), digit), "%) s")
     print("___________________________________________________________")
