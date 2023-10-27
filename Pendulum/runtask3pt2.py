@@ -23,3 +23,4 @@ if __name__ == "__main__":
     oma = Pendulum(excelpath)
 
     oma.plot_slope(guesslengtherror, guess_zero_error, guess_timeerror, reaction_error)
+    oma.plot_through_origin(guesslengtherror, guess_zero_error, guess_timeerror, reaction_error)
