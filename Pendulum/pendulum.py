@@ -196,7 +196,7 @@ class Pendulum:
 
         error_string = self.stringlength_error(guessingerror)
 
-        total_error = [np.sqrt((1*error_string[i])**2 + (1* guess_zero_length)**2) for i in range(len(error_string))]
+        total_error = [np.sqrt(((error_string[i])**2 + (guess_zero_length)**2)) for i in range(len(error_string))]
         return total_error
     
 
@@ -290,7 +290,7 @@ class Pendulum:
             length (array or list): length of pendulum
 
         Returns:
-            List: [g-value, covariance of g]
+            List: [g-value, covariance of g , R_square]
         """
 
         square_period = self.square_period()
@@ -298,27 +298,22 @@ class Pendulum:
         length = self.excel_to_df()[2]["li,ges in m"]    
 
         popt, pcov = curve_fit(gravity, length, square_period) 
+        residuals = square_period - gravity(np.asarray(length), *popt)
+        ss_res = np.sum(residuals ** 2)
+        ss_total = np.sum((square_period - np.mean(square_period)) ** 2)
 
-        return [popt, pcov]
-    
-    
-    # def gravitational_error(self):
-    #     """I should ask the lecturer about this function.
-    #     Coz which value should I use for the length and period?
-    #     Actually I would prefere to use pcov from curve_fit.. but maybe that is not quite the scientific way to do it.
-    #     Anyways.. this is the derivative of the function gravity from the Script that I got from the lecturer. 
-    #     y = ((4 * np.pi ** 2) / g) * l
-    #     y = T^2
+        r_square = 1 - (ss_res / ss_total)
 
-    #     Returns:
-    #         float: error of the function gravity
-    #     """
-        
+        return [popt, pcov, r_square]
 
-    def plot_slope(self, guessing_timeerror, reaction_error):
+
+    def plot_slope(self, guesslengtherror, guess_zero_error, guessing_timeerror, reaction_error):
         """_summary_
 
         Args:
+            guessingerror (float): systematic error of the measuring tool
+            guess_zero_length (float): deviation of the pendulum from the center of mass (If we measure the length of the pendulum, we
+                                        have to measure up to the center of mass from our object -> we cant exactly tell where it is. -> this deviation)
             guessing_timeerror (float): In this experiment we only measure the period 5 times for each length. That is not enough data
                                         to use the common statistical calculation.
                                         In this case we have to guess the uncertainty of the time -> the last digit of my timer.
@@ -330,18 +325,21 @@ class Pendulum:
             _type_: _description_
         """
 
-        grav = self.fit_points()[0]
+        grav = self.fit_points()
         square_period = self.square_period()
         square_period_err = self.square_period_error(guessing_timeerror, reaction_error)
         length = self.excel_to_df()[2]["li,ges in m"]
+        length_error = self.total_length_error(guesslengtherror, guess_zero_error)
+        digit = 3
 
-
+        labeltext = "y = " + str(np.round(float(grav[0]), digit)) + u" \u00B1 " + str(np.round(float(grav[1]), digit)) + "\n $R^{2}$ = " + str(np.round(grav[2], 2))
 
         fig = plt.figure()
         ax = fig.add_subplot()
         plt.scatter(x = length, y = square_period, marker = ".")
-        plt.plot(length, gravity(length, grav), label = grav) # function error of the gravity is missing!
-        plt.errorbar(length ,square_period, xerr= None, yerr = square_period_err, fmt=' ', capsize=3, color = "slategrey")
+        plt.plot(length, gravity(length, grav[0]), label = labeltext)
+       
+        plt.errorbar(length ,square_period, xerr= length_error, yerr = square_period_err, fmt=' ', capsize=3, color = "slategrey")
 
         ax.secondary_xaxis('top').tick_params(axis = 'x', direction = 'out')
         ax.secondary_yaxis('right').tick_params(axis = 'y', direction = 'out')
@@ -357,6 +355,6 @@ class Pendulum:
 
 excelpath = PurePath(str(Path.cwd()) + "/F3_Fadenpendel.xlsx")
 oma = Pendulum(excelpath)
-print(oma.excel_to_df()[2])
 
+print(oma.fit_points())
 
