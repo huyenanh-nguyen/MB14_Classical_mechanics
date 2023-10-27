@@ -30,7 +30,7 @@ class Pendulum:
     This code is very specific for this Excelfile in this Pendulum-folder and will not work for other Excelfiles.
     But for someone who doesn't like the layout of the Excelfile, it is possible to change the code. 
 
-    The important Parameter is the Path to the Excelfile!
+    The important Parameter is the Path to the Excelfile (And all units are SI-Units)!
     """
 
     def __init__(self, excelpath):
@@ -153,21 +153,27 @@ class Pendulum:
         return turning_stdev
     
 
+
+
+
+
     ############################
     #         task 3           #
     ############################
 
     # measuring 5 periods for 12 different pendulum length
 
+
+
     # pendulum length:
 
     def stringlength_error(self, guessingerror):
         """
         Args:
-            guessingerror (float): how accurate can we measure the length? 
+            guessingerror (float): how accurate can we measure the length? (systematic error, limit by the measuring tool)
 
         Returns:
-            List: for each length -> the uncertainty
+            List: measuring unceartainty for each length
         """
 
         accu_class = self.excel_to_df()[2]["∆liEG in mm"]
@@ -177,11 +183,12 @@ class Pendulum:
     
 
     def total_length_error(self, guessingerror, guess_zero_length):
-        """summing up the total error of the length
+        """summed up the total error of the length
 
         Args:
-            guessingerror (float): how accurate can we measure the length?
-            guess_zero_length (float): how accurate can we measure the length of the pendulum from the center of mass?
+            guessingerror (float): systematic error of the measuring tool
+            guess_zero_length (float): deviation of the pendulum from the center of mass (If we measure the length of the pendulum, we
+                                        have to measure till the center of mass from our object -> we cant exactly tell where it is. -> this deviation)
 
         Returns:
             List: total error of the length
@@ -193,26 +200,34 @@ class Pendulum:
         return total_error
     
 
+
+
     # period:
 
     def total_error_period(self, guessing_timeerror, reaction_error):
-        """_summary_
+        """Uncertainty of the period (which was measured 5 times)
 
         Args:
-            guessing_timeerror (float): time accuracy
-            reaction_error (float): reaction error of stopping the time
+            guessing_timeerror (float): In this experiment we only measure the period 5 times for each length. That is not enough data
+                                        to use the common statistical calculation.
+                                        In this case we have to guess the uncertainty of the time -> the last digit of my timer.
+                                        mostly it's 10 ms
+            reaction_error (float): there will be always some reaction delay by stopping the time. this is round about 150 - 200 ms
 
         Returns:
-            List: total error of the period
+            List: total error of the period that was measured 5 times
         """
-        timererror = self.excel_to_df()[2]["∆τ1Uhr in s"]
+        delta_time = self.excel_to_df()[2]["∆τ1Uhr in s"]
 
-        total_period_error = [np.sqrt((timererror[i]**2) + (guessing_timeerror**2) + (reaction_error**2)) for i in range(len(timererror))]
+        total_period_error = [np.sqrt((delta_time[i]**2) + (guessing_timeerror**2) + (reaction_error**2)) for i in range(len(delta_time))]
+        
         return total_period_error
         
 
-    def period_time(self):
-        """We measure the periods 5 times -> for one Period, we need to divide the time with 5
+    def singleperiod(self):
+        """
+        for further analysis we only need the avaerage Period time for each length -> BEcause we measured 5 times the time, we have to 
+        divide this time by 5.
 
         Returns:
             List: List with the time period
@@ -222,6 +237,23 @@ class Pendulum:
         oneperiod = [(fiveperiod[i]/5) for i in range(len(fiveperiod))] # in this script we only measure 5 times of the period
 
         return oneperiod
+    
+
+    def singleperiod_error(self, guessing_timeerror, reaction_error):
+        """
+        Error of the single averaged Period
+
+        Returns:
+            List: Errors for each time of the different length
+        """
+
+        fiveperiod_error = self.total_error_period(guessing_timeerror, reaction_error)
+
+        singleperiod_error = [fiveperiod_error[i] / 5 for i in range(len(fiveperiod_error))]
+
+        return singleperiod_error
+    
+
 
 ########
 
@@ -234,16 +266,16 @@ class Pendulum:
             List: period square -> for the slope
         """
         
-        period = self.period_time()
+        period = self.singleperiod()
 
         square_period = [period[i]**2 for i in range(len(period))]
 
         return square_period
     
 
-    def square_period_error(self):
-        period = self.excel_to_df()[2]["Ti(mean)"] 
-        period_err = self.excel_to_df()[2]["∆Ti,ges (mean)"]
+    def square_period_error(self, guessing_timeerror, reaction_error):
+        period = self.singleperiod()
+        period_err = self.singleperiod_error(guessing_timeerror, reaction_error)
 
         square_period_error = [(2 * period[i]) * period_err[i] for i in range(len(period))]
 
@@ -283,11 +315,24 @@ class Pendulum:
     #     """
         
 
-    def plot_slope(self):
+    def plot_slope(self, guessing_timeerror, reaction_error):
+        """_summary_
+
+        Args:
+            guessing_timeerror (float): In this experiment we only measure the period 5 times for each length. That is not enough data
+                                        to use the common statistical calculation.
+                                        In this case we have to guess the uncertainty of the time -> the last digit of my timer.
+                                        mostly it's 10 ms
+            reaction_error (float): there will be always some reaction delay by stopping the time. this is round about 150 - 200 ms
+
+
+        Returns:
+            _type_: _description_
+        """
 
         grav = self.fit_points()[0]
         square_period = self.square_period()
-        # square_period_err = self.square_period_error()
+        square_period_err = self.square_period_error(guessing_timeerror, reaction_error)
         length = self.excel_to_df()[2]["li,ges in m"]
 
 
@@ -296,7 +341,7 @@ class Pendulum:
         ax = fig.add_subplot()
         plt.scatter(x = length, y = square_period, marker = ".")
         plt.plot(length, gravity(length, grav), label = grav) # function error of the gravity is missing!
-        # plt.errorbar(length ,square_period, xerr= None, yerr = square_period_err, fmt='o', capsize=3, color = "slategrey")
+        plt.errorbar(length ,square_period, xerr= None, yerr = square_period_err, fmt=' ', capsize=3, color = "slategrey")
 
         ax.secondary_xaxis('top').tick_params(axis = 'x', direction = 'out')
         ax.secondary_yaxis('right').tick_params(axis = 'y', direction = 'out')
@@ -313,6 +358,5 @@ class Pendulum:
 excelpath = PurePath(str(Path.cwd()) + "/F3_Fadenpendel.xlsx")
 oma = Pendulum(excelpath)
 print(oma.excel_to_df()[2])
-print(oma.period_time())
 
 
