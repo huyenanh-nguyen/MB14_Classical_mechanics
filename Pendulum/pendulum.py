@@ -207,22 +207,30 @@ class Pendulum:
 
     # period:
 
-    def total_error_period(self, guessing_timeerror, reaction_error):
+    def delta_timer(self):
+         
+         fiveperiod = self.excel_to_df()[1]["τ1 = 5 Ti in s"]
+
+         deltatimer = [(fiveperiod[i] * 0.5 + 10)/1000 for i in range(len(fiveperiod))]
+         return deltatimer
+    
+
+    def total_error_period(self, systematicerror_time, reaction_error):
         """Uncertainty of the period (which was measured 5 times)
 
         Args:
-            guessing_timeerror (float): In this experiment we only measure the period 5 times for each length. That is not enough data
-                                        to use the common statistical calculation.
-                                        In this case we have to guess the uncertainty of the time -> the last digit of my timer.
-                                        mostly it's 10 ms
+            systematicerror_time (float): In this experiment we only measure the period 5 times for each length. That is not enough data
+                                          to use the common statistical calculation.
+                                          In this case we have to guess the uncertainty of the time -> the last digit of my timer.
+                                          mostly it's 10 ms
             reaction_error (float): there will be always some reaction delay by stopping the time. this is round about 150 - 200 ms
 
         Returns:
             List: total error of the period that was measured 5 times
         """
-        delta_time = self.excel_to_df()[2]["∆τ1Uhr in s"]
+        delta_time = self.delta_timer()
 
-        total_period_error = [np.sqrt((delta_time[i]**2) + (guessing_timeerror**2) + (reaction_error**2)) for i in range(len(delta_time))]
+        total_period_error = [np.sqrt((delta_time[i]**2) + (systematicerror_time**2) + (reaction_error**2)) for i in range(len(delta_time))]
         
         return total_period_error
         
@@ -242,15 +250,22 @@ class Pendulum:
         return oneperiod
     
 
-    def singleperiod_error(self, guessing_timeerror, reaction_error):
+    def singleperiod_error(self, systematicerror_time, reaction_error):
         """
         Error of the single averaged Period
+        
+        Args:
+            systematicerror_time (float): In this experiment we only measure the period 5 times for each length. That is not enough data
+                                          to use the common statistical calculation.
+                                          In this case we have to guess the uncertainty of the time -> the last digit of my timer.
+                                          mostly it's 10 ms
+            reaction_error (float): there will be always some reaction delay by stopping the time. this is round about 150 - 200 ms
 
         Returns:
             List: Errors for each time of the different length
         """
 
-        fiveperiod_error = self.total_error_period(guessing_timeerror, reaction_error)
+        fiveperiod_error = self.total_error_period(systematicerror_time, reaction_error)
 
         singleperiod_error = [fiveperiod_error[i] / 5 for i in range(len(fiveperiod_error))]
 

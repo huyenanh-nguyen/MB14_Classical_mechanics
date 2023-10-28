@@ -1,8 +1,17 @@
 from pendulum import Pendulum
 import numpy as np
 from pathlib import Path, PurePath
+from itertools import chain
 
 class Resultexport(Pendulum):
+    """
+    This class is used to export the results of the experiment to a txt file.
+    The exportlanguage is german (The task was in german and all the variables are in german, which makes it easier to understand the export better for my group members.
+    it would be too complicated to translate all the variables to english)
+
+    Args:
+        Pendulum (class): all the mathmatics formular for this experiment
+    """
 
     def equilibrium_vs_turning(self, systematic_error_time, digit):
         
@@ -42,26 +51,80 @@ class Resultexport(Pendulum):
         return text
 
 
-    def length_period(self, systematic_error_length, masspointerror):
-        """_summary_
+    def length_period(self, systematic_error_length, masspointerror, systematicerror_time, reaction_error, digit):
+        """This function returns the results of the experiment.
 
         Args:
-            systematic_error_length (float): _description_
+            systematic_error_length (float): systematic error of the measuring tool
             masspointerror (float): deviation of the pendulum from the center of mass (If we measure the length of the pendulum, we
                                     have to measure till the center of mass from our object -> we cant exactly tell where it is. -> this deviation)
         """
 
-        delta_string = self.stringlength_error(systematic_error_length)
-        total_length_error = self.total_length_error(systematic_error_length,  masspointerror)
+        delta_string = np.round(self.stringlength_error(systematic_error_length), digit)
+        total_length_error = np.round(self.total_length_error(systematic_error_length,  masspointerror), digit) 
+        deltaclock = np.round(self.delta_timer(), digit)
+        deltatime = np.round(self.total_error_period(systematicerror_time, reaction_error), digit)
+        singleperiod = np.round(self.singleperiod(), digit)
+        deltasingleperiod = np.round(self.singleperiod_error(systematicerror_time, reaction_error), digit)
+        squareperiod = np.round(self.square_period(), digit)
+        squareperiod_err = np.round(self.square_period_error(systematicerror_time, reaction_error), digit)
 
-        
 
+        line0 = "_________________________________________________________________________________________"
+        line1 = "Gesamtlänge des Pendels mit der Flasche und dieses ∆l_iEG habe ich nicht in diesen File mit reingetan."
+        line2 = "∆li(Faden) = " + str(delta_string) + " in m"
+        line3 = "∆li(ges) = " + str(total_length_error) + " in m"
+        line4 = " "
+        line5 = "Ah! Für ∆τ(stat) = 10 ms und ∆τ(react) = 150 ms habe ich gesetzt. obwohl vllt wenn man  ∆τ(react) = 200 ms setzt, vllt ist man näher an den wahren Wert ran"
+        line6 = " "
+        line7 = "∆τi(Uhr) = " + str(deltaclock) + " in s"
+        line8 = "∆τi(ges) = " + str(deltatime) + " in s"
+        line9 = " "
+        line10 = "Ti = " + str(singleperiod) + " in s"
+        line11 = "∆Ti = " + str(deltasingleperiod) + " in s"
+        line12 = "yi = " + str(squareperiod) + " in s^2"
+        line13 = "∆yi = " + str(squareperiod_err) + " in s^2"
+        line14 = " "
 
+        text = [line0, " ", line1, line2, line3, line4, line5, line6, line7, line8, line9, line10, line11, " ", line12, line13, line14, "der Plot kommt seperat als Bilder rein", " "]
 
-        line1 = "Gesamtlänge des Pendels mit der Flasche und dieses ∆l_iEG habe ich nicht mit reingenommen."
+        return text
+    
+    
+    def flattenlist(self, array):
+        return list(chain.from_iterable(array))
+    
+    
+    def export(self, systematic_error_length, masspointerror, systematic_error_time, reaction_error, digit):
+        """All results are exported to a txt file.
+
+        Args:
+            systematic_error_time (float): In this experiment we only measure the period 5 times for each length. That is not enough data
+                                          to use the common statistical calculation.
+                                          In this case we have to guess the uncertainty of the time -> the last digit of my timer.
+                                          mostly it's 10 ms
+            systematic_error_length (float): systematic error of the measuring tool
+            masspointerror (float): deviation of the pendulum from the center of mass (If we measure the length of the pendulum, we
+                                    have to measure till the center of mass from our object -> we cant exactly tell where it is. -> this deviation)
+            reaction_error (float): reaction time of the person who measures the time
+            digit (int): number of digits after the comma
+
+        Returns:
+            None: The results are exported to a txt file.
+        """
+        text = [self.equilibrium_vs_turning(systematic_error_time, digit), self.length_period(systematic_error_length, masspointerror, systematic_error_time, reaction_error, digit)]
+        flat_text = self.flattenlist(text)
+
+       
+        with open('F3_Results.txt', 'w') as datei:
+            for line in flat_text:
+                datei.write(line + '\n')    # add a newline character
+
+        return None
+
 
 
 excel = PurePath(str(Path.cwd()) + "/F3_Fadenpendel.xlsx")
 oma = Resultexport(excel)
 
-print(oma.equilibrium_vs_turning(0.001, 4))
+print(oma.export(0.0005,0.001, 0.01, 0.15, 5))
