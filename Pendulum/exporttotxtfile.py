@@ -126,6 +126,25 @@ class Resultexport(Pendulum):
     
 
     def result3_to_df(self,systematic_error_length, masspointerror, systematicerror_time, reaction_error, digit):
+        """
+        This function returns the results of the experiment in a dataframe.
+        That was pain to transfer the results from a txt file to my protocol... so I decided to make a dataframe and export it to an excel file.
+
+        Args:
+            systematic_error_time (float): In this experiment we only measure the period 5 times for each length. That is not enough data
+                                        to use the common statistical calculation.
+                                        In this case we have to guess the uncertainty of the time -> the last digit of my timer.
+                                        mostly it's 10 ms
+            systematic_error_length (float): systematic error of the measuring tool
+            masspointerror (float): deviation of the pendulum from the center of mass (If we measure the length of the pendulum, we
+                                    have to measure till the center of mass from our object -> we cant exactly tell where it is. -> this deviation)
+            reaction_error (float): reaction time of the person who measures the time
+            digit (int): number of digits after the comma
+
+        Returns:
+            Dataframe: returns a dataframe with all the results
+        """
+        
         totallength = [(self.excel_to_df()[1]["li in m"][i] + self.excel_to_df()[1]["l0,schätz in m"][i]) for i in range(len(self.excel_to_df()[1]["li in m"]))]
         eg_length = [(0.4/1000 * totallength[i] + 0.6 / 1000) for i in range(len(totallength))]
         delta_string = np.round(self.stringlength_error(systematic_error_length), digit)
