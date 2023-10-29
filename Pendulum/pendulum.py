@@ -253,7 +253,7 @@ class Pendulum:
     def singleperiod_error(self, systematicerror_time, reaction_error):
         """
         Error of the single averaged Period
-        
+
         Args:
             systematicerror_time (float): In this experiment we only measure the period 5 times for each length. That is not enough data
                                           to use the common statistical calculation.
@@ -400,7 +400,7 @@ class Pendulum:
         length =  np.array(self.excel_to_df()[2]["li,ges in m"])
 
         length_error = np.array(self.total_length_error(guesslengtherror, guess_zero_error))
-        digit = 3
+        digit = 4
 
         labeltext = "y = " + str(np.round(float(slope[0]), digit)) + u" \u00B1 " + str(np.round(float(slope[1]), digit)) + "\n $R^{2}$ = " + str(np.round(slope[2], digit))
 
