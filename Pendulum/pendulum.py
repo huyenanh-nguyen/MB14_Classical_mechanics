@@ -419,10 +419,50 @@ class Pendulum:
         plt.show()
 
         return None
+    
 
+    def combinedplot(self,guesslengtherror, guess_zero_error, guessing_timeerror, reaction_error):
+        grav = self.fit_points()
+        square_period = np.array(self.square_period())
+        square_period_err = np.array(self.square_period_error(guessing_timeerror, reaction_error))
+        length =  np.array(self.excel_to_df()[2]["li,ges in m"])
 
+        length_error = np.array(self.total_length_error(guesslengtherror, guess_zero_error))
+        digit = 3
+
+        labeltext = "y = " + str(np.round(float(grav[0]), digit)) + u" \u00B1 " + str(np.round(float(grav[1]), digit)) + "\n $R^{2}$ = " + str(np.round(grav[2], digit))
+        slope = self.fit_origin()
+        square_period = np.array(self.square_period())
+        square_period_err = np.array(self.square_period_error(guessing_timeerror, reaction_error))
+        length =  np.array(self.excel_to_df()[2]["li,ges in m"])
+
+        length_error = np.array(self.total_length_error(guesslengtherror, guess_zero_error))
+        digit = 4
+
+        labeltext = "y = " + str(np.round(float(slope[0]), digit)) + u" \u00B1 " + str(np.round(float(slope[1]), digit)) + "\n $R^{2}$ = " + str(np.round(slope[2], digit))
+
+        fig = plt.figure()
+        ax = fig.add_subplot()
+        plt.scatter(x = length, y = square_period, marker = ".")
+        plt.plot(length, origin_fit(length, slope[0]), label = labeltext)
+       
+        plt.errorbar(length ,square_period, xerr= length_error, yerr = square_period_err, fmt=' ', capsize=3, color = "slategrey")
+        plt.scatter(x = length, y = square_period, marker = ".")
+        plt.plot(length, gravity(length, grav[0]), label = labeltext)
+       
+        plt.errorbar(length ,square_period, xerr= length_error, yerr = square_period_err, fmt=' ', capsize=3, color = "slategrey")
+
+        ax.secondary_xaxis('top').tick_params(axis = 'x', direction = 'out')
+        ax.secondary_yaxis('right').tick_params(axis = 'y', direction = 'out')
+        plt.legend(loc = 'upper left')
+        plt.xlabel("l in m")
+        plt.ylabel("$T^{2}$ in $s^{2}$")
+        plt.show()
+
+        return None
 
 excelpath = PurePath(str(Path.cwd()) + "/F3_Fadenpendel.xlsx")
 oma = Pendulum(excelpath)
 
 
+oma.combinedplot(0.001, 0.0012, 0.01, 0.1)
