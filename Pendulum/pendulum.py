@@ -24,6 +24,9 @@ def gravity(l, g):
 def origin_fit(x, m):
             return  m * x
 
+def noorigin_fit(x, m, c):
+            return  m * x + c
+
 class Pendulum:
     """
     Well using Jupyter Notebook is quite annoying.
@@ -298,6 +301,11 @@ class Pendulum:
         square_period_error = [(2 * period[i]) * period_err[i] for i in range(len(period))]
 
         return square_period_error
+    
+
+    #############
+    #   Plot    #
+    #############
 
 
     def fit_points(self):
@@ -313,7 +321,7 @@ class Pendulum:
 
         square_period = self.square_period()
 
-        length = self.excel_to_df()[2]["li,ges in m"]    
+        length = self.excel_to_df()[1]["li in m"]    
 
         popt, pcov = curve_fit(gravity, length, square_period) 
         residuals = square_period - gravity(np.asarray(length), *popt)
@@ -471,7 +479,25 @@ class Pendulum:
     
 
 
+    def fit_noorigin(self):
+        """
+        forcing the slope to go through the origin.
+
+        Returns:
+            List: [slope, covariance, R_square]
+        """
+
+        square_period = self.square_period()
+        length = self.excel_to_df()[1]["li in m"] 
         
+        popt, pcov = curve_fit(noorigin_fit, length, square_period)
+        residuals = square_period - noorigin_fit(np.asarray(length), *popt)
+        ss_res = np.sum(residuals ** 2)
+        ss_total = np.sum((square_period - np.mean(square_period)) ** 2)
+
+        r_square = 1 - (ss_res / ss_total)
+
+        return [popt, pcov, r_square]
 
 
 
@@ -479,5 +505,5 @@ excelpath = PurePath(str(Path.cwd()) + "/F3_Fadenpendel.xlsx")
 oma = Pendulum(excelpath)
 
 
-oma.plot_through_origin(0.001, 0.0012, 0.01, 0.1)
-print(oma.gravity())
+# oma.plot_through_origin(0.001, 0.0012, 0.01, 0.1)
+print(oma.fit_noorigin())
