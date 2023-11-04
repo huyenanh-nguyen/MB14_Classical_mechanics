@@ -1,6 +1,7 @@
 from MathKit.statsengine import Statistics
 import pandas as pd
 import numpy as np
+from numpy import sqrt
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 from pathlib import Path, PurePath
@@ -344,6 +345,29 @@ class Pendulum:
 
         return [popt, pcov, r_square]
     
+    def gravity(self):
+        """from the slope calculating the eroor and the error of it
+        -> because the pendulum swings back and forth within a small angle, we can assume that the pendulum swings with a harmonic motion.
+        which leads to the following equation:
+        T = 2 * pi * sqrt(l/g)
+        -> square it and we get:
+        T^2 = ((4 * pi^2)/g) * l
+        with this form we get a linear regression and can calculate the slope.
+        from the slope we can calculate the acceleration g:
+        g = (4 * pi^2) / slope
+
+        Returns:
+            List: gravity, error of the gravity
+        """
+            
+        slope = self.fit_origin()[0]
+        slope_err = self.fit_origin()[1]
+
+        g = (4 * np.pi**2) / slope
+        g_err = sqrt((((4 * np.pi**2)/slope ** 2) * slope_err)**2)
+
+        return [g, g_err]
+    
 
 
     def plot_slope(self, guesslengtherror, guess_zero_error, guessing_timeerror, reaction_error):
@@ -392,16 +416,34 @@ class Pendulum:
     
 
     def plot_through_origin(self,guesslengtherror, guess_zero_error, guessing_timeerror, reaction_error):
+        """without taking the full length of the pendulum into account. -> forcing the slope to go through the origin.
+
+        Args:
+            guessingerror (float): systematic error of the measuring tool
+            guess_zero_length (float): deviation of the pendulum from the center of mass (If we measure the length of the pendulum, we
+                                        have to measure up to the center of mass from our object -> we cant exactly tell where it is. -> this deviation)
+            guessing_timeerror (float): In this experiment we only measure the period 5 times for each length. That is not enough data
+                                        to use the common statistical calculation.
+                                        In this case we have to guess the uncertainty of the time -> the last digit of my timer.
+                                        mostly it's 10 ms
+            reaction_error (float): there will be always some reaction delay by stopping the time. this is round about 150 - 200 ms
+
+
+        Returns:
+            Plot: plot with the slope going through the origin
+        """
 
         slope = self.fit_origin()
         square_period = np.array(self.square_period())
         square_period_err = np.array(self.square_period_error(guessing_timeerror, reaction_error))
         length =  np.array(self.excel_to_df()[2]["li,ges in m"])
 
+        grav_results = self.gravity()
+
         length_error = np.array(self.total_length_error(guesslengtherror, guess_zero_error))
         digit = 3
 
-        labeltext = "y(l) = " + str(np.round(float(slope[0]), digit)) + u" l \u00B1 " + str(np.round(float(slope[1]), digit)) + "\n$R^{2}$ = " + str(np.round(slope[2], digit))
+        labeltext = "y(l) = " + str(np.round(float(slope[0]), digit)) + u" l \u00B1 " + str(np.round(float(slope[1]), digit)) + "\n$R^{2}$ = " + str(np.round(slope[2], digit)) +  "\n$g$ = " + str(np.round(grav_results[0][0], digit)) + u" \u00B1 " + str(np.round(grav_results[1][0][0], digit)) + " $m/s^{2}$"
         
         x_value = np.linspace(0, 2.1, 5)
 
@@ -421,12 +463,16 @@ class Pendulum:
         # ax.secondary_yaxis('right').tick_params(axis = 'y', direction = 'out')
         # ax.spines['right'].set_visible(False)  # remove the top and right spines
         plt.legend(loc = 'upper left')
-        plt.xlabel("l in m")
-        plt.ylabel("$T^{2}$ in $s^{2}$")
+        plt.xlabel("l in m", fontsize=12)
+        plt.ylabel("$T^{2}$ in $s^{2}$", fontsize=12)
         plt.show()
 
         return None
     
+
+
+        
+
 
 
 excelpath = PurePath(str(Path.cwd()) + "/F3_Fadenpendel.xlsx")
@@ -434,3 +480,4 @@ oma = Pendulum(excelpath)
 
 
 oma.plot_through_origin(0.001, 0.0012, 0.01, 0.1)
+print(oma.gravity())
