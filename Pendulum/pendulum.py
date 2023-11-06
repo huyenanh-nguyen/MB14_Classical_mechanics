@@ -27,6 +27,8 @@ def origin_fit(x, m):
 def noorigin_fit(x, m, c):
             return  m * x + c
 
+
+
 class Pendulum:
     """
     Well using Jupyter Notebook is quite annoying.
@@ -330,7 +332,7 @@ class Pendulum:
 
         r_square = 1 - (ss_res / ss_total)
 
-        return [popt, pcov, r_square]
+        return popt, pcov, r_square
     
 
     def fit_origin(self):
@@ -351,7 +353,7 @@ class Pendulum:
 
         r_square = 1 - (ss_res / ss_total)
 
-        return [popt, pcov, r_square]
+        return popt, pcov, r_square
     
     def gravity(self):
         """from the slope calculating the eroor and the error of it
@@ -374,12 +376,14 @@ class Pendulum:
         g = (4 * np.pi**2) / slope
         g_err = sqrt((((4 * np.pi**2)/slope ** 2) * slope_err)**2)
 
-        return [g, g_err]
+        return g, g_err
     
 
 
     def plot_slope(self, guesslengtherror, guess_zero_error, guessing_timeerror, reaction_error):
-        """_summary_
+        """
+        forcing the plot to go through the origin.
+        with the slope we can calculate the gravity acceleration g
 
         Args:
             guessingerror (float): systematic error of the measuring tool
@@ -393,7 +397,7 @@ class Pendulum:
 
 
         Returns:
-            _type_: _description_
+            plot: with the functionname, R_Square, g with error
         """
 
         grav = self.fit_points()
@@ -479,31 +483,98 @@ class Pendulum:
     
 
 
-    def fit_noorigin(self):
+    def getting_l0(self):
         """
-        forcing the slope to go through the origin.
+        plotting the data without forcing them to go through the origin.
+        x_values are the length of the pendulum and the y_values are the squared period.
+        with the optimized function, we can get a better gravity accerelation results, because we are keeping the errors like rotations ect in account.
+        that is why we need the value l0, to make further calculation.
 
         Returns:
-            List: [slope, covariance, R_square]
+            List: [g, delta_g, l0, delta_l0]
         """
 
         square_period = self.square_period()
         length = self.excel_to_df()[1]["li in m"] 
         
         popt, pcov = curve_fit(noorigin_fit, length, square_period)
+
+        g = (4 * (np.pi ** 2))/ popt[0]
+        delta_g = sqrt((((4 *( np.pi**2))/popt[0] ** 2) * pcov[0][0])**2)
+
+        l0 = (g / (4 * (np.pi **2))) * popt[1]
+        delta_l0 = sqrt( ((1 / (4 * np.pi**2)) * delta_g)**2 * ((1 / (4 * np.pi ** 2)) *  pcov[1])**2 )
         residuals = square_period - noorigin_fit(np.asarray(length), *popt)
         ss_res = np.sum(residuals ** 2)
         ss_total = np.sum((square_period - np.mean(square_period)) ** 2)
-
         r_square = 1 - (ss_res / ss_total)
+        return [g, delta_g, l0, delta_l0, r_square, popt, pcov]
+    
 
-        return [popt, pcov, r_square]
+    def fit_optimized(self):
+        """
+        optimized version to get the gravity acceleration by calculating l0 (the error of the length of the pendulum).
 
 
+        Returns:
+            List: g with its error
+        """
+        l0 = self.getting_l0()[2]
+        
+        l = self.excel_to_df()[1]["li in m"]
+        square_period = self.square_period()
 
-excelpath = PurePath(str(Path.cwd()) + "/F3_Fadenpendel.xlsx")
+        def optimum_g(l, g):
+            return ((4 * np.pi ** 2) / g) * (l + l0)
+
+        popt, pcov = curve_fit(optimum_g, l, square_period)
+        residuals = square_period - optimum_g(np.asarray(l), *popt)
+        ss_res = np.sum(residuals ** 2)
+        ss_total = np.sum((square_period - np.mean(square_period)) ** 2)
+        r_square = 1 - (ss_res / ss_total)
+        return popt, pcov, r_square
+    
+
+    def plot_withintercept(self, guessing_timeerror, reaction_error):
+        grav = self.getting_l0()
+        square_period = np.array(self.square_period())
+        square_period_err = np.array(self.square_period_error(guessing_timeerror, reaction_error))
+        length =  np.array(self.excel_to_df()[1]["li in m"])
+
+        length_error = np.array(self.excel_to_df()[2]["∆liEG in mm"])
+
+        digit = 3
+
+        labeltext = "y(l) = (" + str(round(float(grav[5][0]), digit)) + u" \u00B1 " + str(round(float(grav[6][0][0]), digit)) + ") l  + (" + str(round(float(grav[5][1]), digit)) + u" \u00B1 " + str(round(float(grav[6][0][0]), digit)) + ")" + "\n$R^{2}$ = " + str(round(grav[4], digit)) +  "\n$g$ = " + '{:.3f}'.format(round(grav[0], digit)) + u" \u00B1 " + str(round(grav[1], digit)) + " $m/s^{2}$" +  "\n$l_0$ = " + str(round(grav[2], digit)) + u" \u00B1 " + str(np.format_float_scientific(grav[3][0],precision=3)) + " $m$"
+        x_value = np.linspace(0, 2.1, 5)
+        fig = plt.figure()
+        ax = fig.add_subplot()
+        plt.scatter(x = length, y = square_period, marker = ".")
+        # plt.plot(length, origin_fit(length, slope[0]), label = labeltext)
+        plt.plot(x_value, noorigin_fit(x_value, grav[5][0], grav[5][1]), label = labeltext, color = "tab:orange")
+       
+        plt.errorbar(length ,square_period, xerr= length_error, yerr = square_period_err, fmt=' ', capsize=3, color = "dimgrey")
+        ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f')) # set y-axis to 2 decimal places
+        
+        ax.yaxis.set_ticks(np.arange(0, 10, 1))
+        ax.set_ylim(ymin=0)
+        ax.set_xlim(xmin=0)
+        # ax.secondary_xaxis('top').tick_params(axis = 'x', direction = 'out')
+        # ax.secondary_yaxis('right').tick_params(axis = 'y', direction = 'out')
+        # ax.spines['right'].set_visible(False)  # remove the top and right spines
+        plt.legend(loc = 'upper left')
+        plt.xlabel("l in m", fontsize=12)
+        plt.ylabel("$T^{2}$ in $s^{2}$", fontsize=12)
+        plt.show()
+
+        return None
+
+
+excelpath = PurePath(str(Path.cwd()) + "/F3_Fadenpendel-Maksims.xlsx")
 oma = Pendulum(excelpath)
 
 
-# oma.plot_through_origin(0.001, 0.0012, 0.01, 0.1)
-print(oma.fit_noorigin())
+oma.plot_through_origin(0.001, 0.0012, 0.01, 0.1)
+# print(oma.getting_l0())
+print(oma.fit_optimized())
+# print(oma.gravity())
