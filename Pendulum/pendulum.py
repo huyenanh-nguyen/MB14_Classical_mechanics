@@ -570,11 +570,12 @@ class Pendulum:
         return None
 
 
-excelpath = PurePath(str(Path.cwd()) + "/F3_Fadenpendel-Maksims.xlsx")
+excelpath = PurePath(str(Path.cwd()) + "/F3_Fadenpendel.xlsx")
 oma = Pendulum(excelpath)
 
 
 oma.plot_through_origin(0.001, 0.0012, 0.01, 0.1)
+oma.plot_withintercept(0.01, 0.1)
 # print(oma.getting_l0())
 print(oma.fit_optimized())
 # print(oma.gravity())
