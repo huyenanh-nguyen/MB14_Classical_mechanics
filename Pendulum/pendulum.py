@@ -386,9 +386,10 @@ class Pendulum:
         with the slope we can calculate the gravity acceleration g
 
         Args:
-            guessingerror (float): systematic error of the measuring tool
+            guessingerror (float): systematic error of the measuring tool -> around 1 millimeter
             guess_zero_length (float): deviation of the pendulum from the center of mass (If we measure the length of the pendulum, we
                                         have to measure up to the center of mass from our object -> we cant exactly tell where it is. -> this deviation)
+                                        -> around 1.2 centimeter
             guessing_timeerror (float): In this experiment we only measure the period 5 times for each length. That is not enough data
                                         to use the common statistical calculation.
                                         In this case we have to guess the uncertainty of the time -> the last digit of my timer.
@@ -431,9 +432,10 @@ class Pendulum:
         """without taking the full length of the pendulum into account. -> forcing the slope to go through the origin.
 
         Args:
-            guessingerror (float): systematic error of the measuring tool
+            guessingerror (float): systematic error of the measuring tool -> around 1 millimeter
             guess_zero_length (float): deviation of the pendulum from the center of mass (If we measure the length of the pendulum, we
                                         have to measure up to the center of mass from our object -> we cant exactly tell where it is. -> this deviation)
+                                        -> around 1.2 centimeter
             guessing_timeerror (float): In this experiment we only measure the period 5 times for each length. That is not enough data
                                         to use the common statistical calculation.
                                         In this case we have to guess the uncertainty of the time -> the last digit of my timer.
@@ -536,6 +538,15 @@ class Pendulum:
     
 
     def plot_withintercept(self, guessing_timeerror, reaction_error):
+        """Fitting the Data without forcing it through the origin. The result will be better than forcing it to go through 0.
+
+        Args:
+            guessing_timeerror (int): its around 10 milliseconds
+            reaction_error (int): it is around 150 milliseconds
+
+        Returns:
+            _type_: _description_
+        """
         grav = self.getting_l0()
         square_period = np.array(self.square_period())
         square_period_err = np.array(self.square_period_error(guessing_timeerror, reaction_error))
