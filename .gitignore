@@ -59,11 +59,4 @@ Temporary Items
 
 .pytest_cache
 .Pendulum/pytest_cache
-/Pendulum/F3_Results.txt
-/Pendulum/F3_Results_Maksims.txt
-/Pendulum/F3_Fadenpendel-Maksims.xlsx
-/Pendulum/F3_Results_Oscar.txt
-/Pendulum/F3_Fadenpendel_oscar.xlsx
-/Pendulum/F3_Results_Anh.txt
-/Pendulum/Results_Fadenpendel_Oscar.xlsx
-/Pendulum/Results_Fadenpendel-Maksims.xlsx
+results_teammember/
