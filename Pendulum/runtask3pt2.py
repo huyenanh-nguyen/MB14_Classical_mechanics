@@ -23,4 +23,3 @@ if __name__ == "__main__":
     oma = Pendulum(excelpath)
 
     oma.plot_slope(guesslengtherror, guess_zero_error, guess_timeerror, reaction_error)
-    oma.combinedplot(guesslengtherror, guess_zero_error, guess_timeerror, reaction_error)
