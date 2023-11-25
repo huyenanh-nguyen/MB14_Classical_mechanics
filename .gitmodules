@@ -1,3 +1,6 @@
 [submodule "Pendulum/MathKit"]
 	path = Pendulum/MathKit
 	url = git@github.com:huyenanh-nguyen/MathKit.git
+[submodule "String_Vibration/MathKit"]
+	path = String_Vibration/MathKit
+	url = git@github.com:huyenanh-nguyen/MathKit.git
