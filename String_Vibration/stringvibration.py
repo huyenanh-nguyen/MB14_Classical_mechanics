@@ -49,22 +49,24 @@ class Guitarstring:
         task1_table1 = pd.read_excel(excel, sheet_name = "Task 1", skiprows=3).iloc[0:9,np.arange(1,5)].dropna(axis = 0, how = 'all')
         task1_table2 = pd.read_excel(excel, sheet_name = "Task 1", skiprows=17).iloc[0:10,np.arange(1,4)].dropna(axis = 0, how = 'all')
 
-        task2 = pd.read_excel(excel, sheet_name = "Task 2", skiprows=3).dropna(axis = 1, how = 'all')
-        col_header = []
+        # Start Task 2
+        # Task 2 has three same table, that has the same length and sam columnheader. But because of that, I have to write a slightly different code
+        # then for the other Tasks. For example, Pandas would rename the columnheader from "fn in Hz, fn in Hz, fn in Hz" to "fn in Hz, fn in Hz.1, fn in Hz.2"
+        # which is not ideal for a simple use ... so i have to rename the columnheader.
+        # I hope it is not too confusing from here.
+        columnheader = pd.read_excel(excel, sheet_name= "Task 2", header = None, skiprows=3).dropna(axis = 1, how = "all").values[0]
+        table = pd.read_excel(excel, sheet_name= "Task 2", header = None, skiprows=4).dropna(axis = 1, how = "all")
+        table.columns = columnheader
 
-        for i in range(3):
-            if i == 0:
-                col_header.append("fn in Hz")
-
-            else:
-                col_header.append("fn in Hz" + "." + str(i))
-
-        col_index = [task2.columns.get_loc(col_header[i]) for i in range(3)]    # columnindex for the header "fn in Hz"
+        col_index = [0, 4, 8] # columnindex for the header "fn in Hz" 
 
         task2_dataframes = []   # contains all tables in a list
 
         for i in col_index:
-            task2_dataframes.append(task2.iloc[:,i : i+4])
+            task2_dataframes.append(table.iloc[:,i : i+4])
+
+        # End Task 2
+
 
         task3 = pd.read_excel(excel, sheet_name = "Task 3", skiprows=2).dropna(axis = 1, how = 'all')
         task4 = pd.read_excel(excel, sheet_name = "Task 4", skiprows=2).dropna(axis = 1, how = 'all')
@@ -73,23 +75,67 @@ class Guitarstring:
 
 
     def resonancefit_params(self, taskindex, x_column, y_column):
+        """Collection of the fit parameters.
+        For Task 2 there will be a list for each table (there are 3)
+
+        Args:
+            taskindex (int): index of the task -> Task1 = 0 & 1, Task2 = 2, Task3 = 3, Task 4 = 4
+            x_column (_type_): Name of the Column where the x_values are
+            y_column (_type_): Name of the Column where the y_values are
+
+        Returns:
+            DataFrame: Returning slope, y_interception, standard deviation of those two parameters and R_Square from the linear fit 
+        """
 
         data = self.excel_dataframes()[taskindex]
-        x_value = data[x_column]
-        y_value = data[y_column]
+        if taskindex != 2:
+            x_value = data[x_column]
+            y_value = data[y_column]
 
-        popt, pcov = curve_fit(linearfit, x_value, y_value)
+            popt, pcov = curve_fit(linearfit, x_value, y_value)
 
-        residuals = y_value - linearfit(np.asarray(x_value), *popt)
-        ss_res = np.sum(residuals ** 2)
-        ss_total = np.sum((y_value - np.mean(y_value)) ** 2)
-        r_square = 1 - (ss_res / ss_total)
+            residuals = y_value - linearfit(np.asarray(x_value), *popt)
+            ss_res = np.sum(residuals ** 2)
+            ss_total = np.sum((y_value - np.mean(y_value)) ** 2)
+            r_square = 1 - (ss_res / ss_total)
 
-        std = np.sqrt(np.diag(pcov))
+            std = np.sqrt(np.diag(pcov))
 
-        data = {"slope": popt[0], "y_inter": popt[1], "std_slope": std[0], "std_inter": std[1], "R_Square": std[0]}
-        resonancefit = pd.DataFrame(data, index=[0])
-        return resonancefit
+            data = {"slope": popt[0], "y_inter": popt[1], "std_slope": std[0], "std_inter": std[1], "R_Square": r_square}
+            resonancefit = pd.DataFrame(data, index=[0])
+
+            return resonancefit
+
+        else:
+            
+            x_list = []
+            y_list = []
+            for i in range(3):
+                x_list.append(data[i][x_column])
+                y_list.append(data[i][y_column])
+            
+            
+            
+            resonance_list = []
+
+            for i in range(3):
+
+                popt, pcov = curve_fit(linearfit, x_list[i], y_list[i])
+
+                residuals = y_list[i] - linearfit(np.asarray(x_list[i]), *popt)
+                ss_res = np.sum(residuals ** 2)
+                ss_total = np.sum((y_list[i] - np.mean(y_list[i])) ** 2)
+                r_square = 1 - (ss_res / ss_total)
+
+                std = np.sqrt(np.diag(pcov))
+
+                data = {"slope": popt[0], "y_inter": popt[1], "std_slope": std[0], "std_inter": std[1], "R_Square": r_square}
+                resonancefit = pd.DataFrame(data, index=[0])
+                resonance_list.append(resonancefit)
+
+
+
+            return resonance_list
 
 
 
@@ -102,11 +148,15 @@ excel = PurePath(str(Path.cwd()) + "/M12_Saitenschwingung.xlsx")
 
 string = Guitarstring(excel)
 
-# print(string.excel_dataframes()[0]["fn in Hz"])
+# print(string.excel_dataframes()[2][2])
 
-# print(string.resonancefit_params(0, "n", "fn in Hz"))
+# print(string.resonancefit_params(2, "n", "fn in Hz"))
 
 
 ########
 # test
 
+# columnheader = pd.read_excel(excel, sheet_name= "Task 2", header = None, skiprows=3).dropna(axis = 1, how = "all").values[0]
+# table = pd.read_excel(excel, sheet_name= "Task 2", header = None, skiprows=4).dropna(axis = 1, how = "all")
+# table.columns = columnheader
+# print(table)

@@ -13,7 +13,7 @@ def linearfit(x, m, b):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description = "String Vibration")
-    parser.add_argument("excelpath", type = str, help = "Path to the Excelfile -> here M12_Saitenschwingung.xlsx")
+    parser.add_argument("excelpath", type = str, help = "Path to the Excelfile -> M12_Saitenschwingung.xlsx")
     parser.add_argument("taskindex", type = int, help = "index of the task -> Task1 = 0 & 1, Task2 = 2, Task3 = 3, Task 4 = 4")
     parser.add_argument("x_column", type = str, help = "column name of the x values -> n is mostly the x_column")
     parser.add_argument("y_column", type = str, help = "column name of the y values -> fn is mostly the y_column")
@@ -31,13 +31,18 @@ if __name__ == "__main__":
     systematic_error_frequence = args.systematic_error_frequence
     systematic_error_ruler = args.systematic_error_ruler
 
+
     string = Guitarstring(excelpath)
 
     statsticset = string.excel_dataframes()[taskindex][valueset]
     statistics = Statistics(statsticset)
 
-    dataset = string.excel_dataframes()[taskindex]  # Index 0 is for the first table and Index 1 is for the second table of the sheet "task 1"
-    fit_params = string.resonancefit_params(taskindex, x_column, y_column)
+    dataset = string.excel_dataframes()[taskindex]
+
+    fit_params = []
+
+    for i in range(3):
+        fit_params.append(string.resonancefit_params(taskindex, x_column, y_column))
 
     slope = fit_params["slope"][0]  # slope of the fit
     stringlength = dataset["L in m"].unique()[0]    # length of the string
