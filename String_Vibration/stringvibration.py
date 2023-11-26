@@ -77,14 +77,19 @@ class Guitarstring:
         data = self.excel_dataframes()[taskindex]
         x_value = data[x_column]
         y_value = data[y_column]
-        
+
         popt, pcov = curve_fit(linearfit, x_value, y_value)
 
         residuals = y_value - linearfit(np.asarray(x_value), *popt)
         ss_res = np.sum(residuals ** 2)
         ss_total = np.sum((y_value - np.mean(y_value)) ** 2)
         r_square = 1 - (ss_res / ss_total)
-        return popt, pcov, r_square
+
+        std = np.sqrt(np.diag(pcov))
+
+        data = {"slope": popt[0], "y_inter": popt[1], "std_slope": std[0], "std_inter": std[1], "R_Square": std[0]}
+        resonancefit = pd.DataFrame(data, index=[0])
+        return resonancefit
 
 
 
@@ -97,7 +102,9 @@ excel = PurePath(str(Path.cwd()) + "/M12_Saitenschwingung.xlsx")
 
 string = Guitarstring(excel)
 
-print(string.resonancefit_params(0, "n", "fn in Hz"))
+# print(string.excel_dataframes()[0]["fn in Hz"])
+
+# print(string.resonancefit_params(0, "n", "fn in Hz"))
 
 
 ########
