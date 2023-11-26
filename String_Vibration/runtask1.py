@@ -37,7 +37,15 @@ if __name__ == "__main__":
     dataset = string.excel_dataframes()[taskindex]
     fit_params = string.resonancefit_params(taskindex, x_column, y_column)
 
+    slope = fit_params["slope"][0]  # slope of the fit
+    stringlength = dataset["L in m"].unique()[0]    # length of the string
+
+
+    print("_______________________________________________________")
+    print(" ")
     print(fit_params)
+    print("_______________________________________________________")
+    print(" ")
 
     roundnum = 3
     print("dont know if we need that:")
@@ -45,8 +53,33 @@ if __name__ == "__main__":
     print("f_n(sdt) in Hz : ",round(statistics.std_dev(), roundnum))
     print("f_n(confidenveinterval) in Hz : ",round(statistics.confidence_interval(), roundnum))
 
+    # fundemental frequency and propagation speed of the vibration
 
-    legendtext = "y = ("  + str(round(fit_params["slope"][0], roundnum)) +  u" \u00B1 " + str(round(fit_params["std_slope"][0], roundnum)) + ") x (" + str(round(fit_params["y_inter"][0], roundnum))  + u" \u00B1 " + str(round(fit_params["std_inter"][0], roundnum)) + ") \n$R^2$ = " + str(round(fit_params["R_Square"][0], roundnum))
+    print("_______________________________________________________")
+    print(" ")
+
+    m = 1   # mass in kg
+
+    print("slope: ", round(slope, roundnum),u" \u00B1 ", round(fit_params["std_slope"][0], roundnum), " Hz")
+    print("c = ", round(slope * 2 * stringlength, roundnum), " m/s")
+    print("µ = ", round(m / stringlength, roundnum), " kg/m")
+
+    print(" ")
+    print("_______________________________________________________")
+    print(" ")
+
+
+    # wavelength for mode n = 3 and n = 4
+
+    print("λ3 = ", round(stringlength * 2 / 3, roundnum), " m")
+    print("λ4 = ", round(stringlength * 2 / 4, roundnum), " m")
+    print(" ")
+    print("_______________________________________________________")
+    print(" ")
+
+
+    # plot 
+    legendtext = "y = ("  + str(round(slope, roundnum)) +  u" \u00B1 " + str(round(fit_params["std_slope"][0], roundnum)) + ") x (" + str(round(fit_params["y_inter"][0], roundnum))  + u" \u00B1 " + str(round(fit_params["std_inter"][0], roundnum)) + ") \n$R^2$ = " + str(round(fit_params["R_Square"][0], roundnum))
                   
     x_value = np.linspace(0, dataset["n"].max())
     frequence = dataset["fn in Hz"]
@@ -56,7 +89,7 @@ if __name__ == "__main__":
     ax = fig.add_subplot()
     plt.scatter(x = mode, y = frequence, marker = ".")
 
-    plt.plot(x_value, linearfit(x_value, np.array(fit_params["slope"]), np.array(fit_params["y_inter"])), label = legendtext, color = "tab:orange")
+    plt.plot(x_value, linearfit(x_value, np.array(slope), np.array(fit_params["y_inter"][0])), label = legendtext, color = "tab:orange")
 
 
     ax.set_ylim(ymin=0)
@@ -64,6 +97,4 @@ if __name__ == "__main__":
     plt.legend(loc = 'upper left')
     plt.xlabel("n", fontsize=12)
     plt.ylabel("$f_n$ in Hz", fontsize=12)
-    plt.show()
-
-    print(legendtext)
+    # plt.show()

@@ -38,9 +38,9 @@ class Guitarstring:
         
         Task2: Table 1: 9 different frequencies at fix length of the string for nine different modes by changing the force (total 3 forces -> 3 tables)
 
-        Task3: Table 1: Resonancefrequency of the 1st harmonic for different lengths of the string, fix force
+        Task3: Table 1: Resonancefrequency of the fundemental frequency for different lengths of the string, fix force
 
-        Task4: Table 1: Resonancefrequency of the 1st harmonic for 8 different forces, fix length of the string
+        Task4: Table 1: Resonancefrequency of the fundemental frequency for 8 different forces, fix length of the string
 
         Returns:
             List: List full of dataframes
