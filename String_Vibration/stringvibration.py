@@ -68,8 +68,8 @@ class Guitarstring:
         # End Task 2
 
 
-        task3 = pd.read_excel(excel, sheet_name = "Task 3", skiprows=2).dropna(axis = 1, how = 'all')
-        task4 = pd.read_excel(excel, sheet_name = "Task 4", skiprows=2).dropna(axis = 1, how = 'all')
+        task3 = pd.read_excel(excel, sheet_name = "Task 3", skiprows=3).dropna(axis = 1, how = 'all')
+        task4 = pd.read_excel(excel, sheet_name = "Task 4", skiprows=3).dropna(axis = 1, how = 'all')
 
         return [task1_table1,task1_table2, task2_dataframes, task3, task4]
 
@@ -148,9 +148,8 @@ excel = PurePath(str(Path.cwd()) + "/M12_Saitenschwingung.xlsx")
 
 string = Guitarstring(excel)
 
-# print(string.excel_dataframes()[2][2])
-
-# print(string.resonancefit_params(2, "n", "fn in Hz"))
+# print(string.excel_dataframes()[3])
+# print(string.resonancefit_params(3, "n", "fn in Hz"))
 
 
 ########
