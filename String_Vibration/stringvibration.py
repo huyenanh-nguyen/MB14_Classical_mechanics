@@ -74,14 +74,14 @@ class Guitarstring:
         return [task1_table1,task1_table2, task2_dataframes, task3, task4]
 
 
-    def resonancefit_params(self, taskindex, x_column, y_column):
+    def resonancefit_params(self, taskindex : int, x_column : str, y_column : str):
         """Collection of the fit parameters.
         For Task 2 there will be a list for each table (there are 3)
 
         Args:
             taskindex (int): index of the task -> Task1 = 0 & 1, Task2 = 2, Task3 = 3, Task 4 = 4
-            x_column (_type_): Name of the Column where the x_values are
-            y_column (_type_): Name of the Column where the y_values are
+            x_column (str): Name of the Column where the x_values are
+            y_column (str): Name of the Column where the y_values are
 
         Returns:
             DataFrame: Returning slope, y_interception, standard deviation of those two parameters and R_Square from the linear fit 

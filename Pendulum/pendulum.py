@@ -41,7 +41,7 @@ class Pendulum:
     The important Parameter is the Path to the Excelfile (And all units are SI-Units)!
     """
 
-    def __init__(self, excelpath):
+    def __init__(self, excelpath : Path):
         """
         Args:
             excelpath(Path): Path to my Excelfile
@@ -88,7 +88,7 @@ class Pendulum:
         return [period_mean, period_stddev, period_cov]
     
 
-    def equilibrium_period_total_err(self, systematic_error):
+    def equilibrium_period_total_err(self, systematic_error : float):
         """calculating the total uncertainty of the period at the equilibrium point
 
         Args:
@@ -104,7 +104,7 @@ class Pendulum:
         return stats.total_uncertainty_value(systematic_error)
     
 
-    def relative_equilibrium_error(self, systematic_error):
+    def relative_equilibrium_error(self, systematic_error : float):
         excel = self.excel_to_df()[0]["T(Nullpunkt) in s"]
         stats = Statistics(excel)
 
@@ -131,7 +131,7 @@ class Pendulum:
         return [period_mean, period_stddev, period_cov]
     
 
-    def turningpoint_period_total_err(self, systematic_error):
+    def turningpoint_period_total_err(self, systematic_error : float):
         """calculating the total uncertainty of the period at the turning point
 
         Args:
@@ -147,7 +147,7 @@ class Pendulum:
         return stats.total_uncertainty_value(systematic_error)
     
 
-    def relative_turningpoint_err(self, systematic_error):
+    def relative_turningpoint_err(self, systematic_error : float):
         """percantage error (like T ± 0.1%)
 
         Args:
@@ -175,7 +175,7 @@ class Pendulum:
 
     # pendulum length:
 
-    def stringlength_error(self, guessingerror):
+    def stringlength_error(self, guessingerror : float):
         """
         Args:
             guessingerror (float): how accurate can we measure the length? (systematic error, limit by the measuring tool)
@@ -190,7 +190,7 @@ class Pendulum:
         return error_string
     
 
-    def total_length_error(self, guessingerror, guess_zero_length):
+    def total_length_error(self, guessingerror : float, guess_zero_length :float):
         """summed up the total error of the length
 
         Args:
@@ -220,7 +220,7 @@ class Pendulum:
          return deltatimer
     
 
-    def total_error_period(self, systematicerror_time, reaction_error):
+    def total_error_period(self, systematicerror_time : float, reaction_error : float):
         """Uncertainty of the period (which was measured 5 times)
 
         Args:
@@ -255,7 +255,7 @@ class Pendulum:
         return oneperiod
     
 
-    def singleperiod_error(self, systematicerror_time, reaction_error):
+    def singleperiod_error(self, systematicerror_time : float, reaction_error : float):
         """
         Error of the single averaged Period
 
@@ -296,7 +296,19 @@ class Pendulum:
         return square_period
     
 
-    def square_period_error(self, guessing_timeerror, reaction_error):
+    def square_period_error(self, guessing_timeerror : float, reaction_error : float):
+        """calculating errors of the Periods
+
+        Args:
+            guessing_timeerror (float): In this experiment we only measure the period 5 times for each length. That is not enough data
+                                        to use the common statistical calculation.
+                                        In this case we have to guess the uncertainty of the time -> the last digit of my timer.
+                                        mostly it's 10 ms
+            reaction_error (float): there will be always some reaction delay by stopping the time. this is round about 150 - 200 ms
+
+        Returns:
+            List: Square Periods error in list
+        """
         period = self.singleperiod()
         period_err = self.singleperiod_error(guessing_timeerror, reaction_error)
 
@@ -380,7 +392,7 @@ class Pendulum:
     
 
 
-    def plot_slope(self, guesslengtherror, guess_zero_error, guessing_timeerror, reaction_error):
+    def plot_slope(self, guesslengtherror : float, guess_zero_error : float, guessing_timeerror : float, reaction_error : float):
         """
         forcing the plot to go through the origin.
         with the slope we can calculate the gravity acceleration g
@@ -428,7 +440,7 @@ class Pendulum:
         return None
     
 
-    def plot_through_origin(self,guesslengtherror, guess_zero_error, guessing_timeerror, reaction_error):
+    def plot_through_origin(self,guesslengtherror : float, guess_zero_error : float, guessing_timeerror : float, reaction_error : float):
         """without taking the full length of the pendulum into account. -> forcing the slope to go through the origin.
 
         Args:
@@ -537,7 +549,7 @@ class Pendulum:
         return popt, pcov, r_square
     
 
-    def plot_withintercept(self, guessing_timeerror, reaction_error):
+    def plot_withintercept(self, guessing_timeerror : int, reaction_error : int):
         """Fitting the Data without forcing it through the origin. The result will be better than forcing it to go through 0.
 
         Args:
@@ -585,8 +597,8 @@ excelpath = PurePath(str(Path.cwd()) + "/F3_Fadenpendel.xlsx")
 oma = Pendulum(excelpath)
 
 
-oma.plot_through_origin(0.001, 0.0012, 0.01, 0.1)
-oma.plot_withintercept(0.01, 0.1)
+# oma.plot_through_origin(0.001, 0.0012, 0.01, 0.1)
+# oma.plot_withintercept(0.01, 0.1)
 # print(oma.getting_l0())
-print(oma.fit_optimized())
+# print(oma.fit_optimized())
 # print(oma.gravity())
