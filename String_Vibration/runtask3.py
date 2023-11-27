@@ -4,6 +4,7 @@ from stringvibration import Guitarstring
 from MathKit import Statistics
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 from matplotlib.ticker import FormatStrFormatter
 
 def linearfit(x, m, b):
@@ -13,7 +14,7 @@ def linearfit(x, m, b):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description = "String Vibration")
-    parser.add_argument("excelpath", type = str, help = "Path to the Excelfile -> here M12_Saitenschwingung.xlsx")
+    parser.add_argument("excelpath", type = str, help = "Path to the Excelfile -> M12_Saitenschwingung.xlsx")
     parser.add_argument("taskindex", type = int, help = "index of the task -> Task1 = 0 & 1, Task2 = 2, Task3 = 3, Task 4 = 4")
     parser.add_argument("x_column", type = str, help = "column name of the x values -> n is mostly the x_column")
     parser.add_argument("y_column", type = str, help = "column name of the y values -> fn is mostly the y_column")
@@ -31,65 +32,47 @@ if __name__ == "__main__":
     systematic_error_frequence = args.systematic_error_frequence
     systematic_error_ruler = args.systematic_error_ruler
 
+
+    roundnum = 3
     string = Guitarstring(excelpath)
 
-    statsticset = string.excel_dataframes()[taskindex][valueset]
-    statistics = Statistics(statsticset)
+    
+    statisticset = string.excel_dataframes()[taskindex][valueset]   # Valuelist for each "fn in Hz" column
 
-    dataset = string.excel_dataframes()[taskindex]  # Index 0 is for the first table and Index 1 is for the second table of the sheet "task 1"
+    statistics = Statistics(statisticset)
+    
+
+    dataset = string.excel_dataframes()[taskindex]
+
     fit_params = string.resonancefit_params(taskindex, x_column, y_column)
 
     slope = fit_params["slope"][0]  # slope of the fit
+    std_slope = fit_params["std_slope"][0]
     stringlength = dataset["L in m"].unique()[0]    # length of the string
-
-
+    mass = dataset["M in kg"].unique()[0]
+    
     print("_______________________________________________________")
     print(" ")
-    print(fit_params)
-    print("_______________________________________________________")
-    print(" ")
-
-    roundnum = 3
-    print("dont know if we need that:")
-    print("f_n(mean) in Hz : ", round(statistics.std_mean(), roundnum))
-    print("f_n(sdt) in Hz : ",round(statistics.std_dev(), roundnum))
-    print("f_n(confidenveinterval) in Hz : ",round(statistics.confidence_interval(), roundnum))
-
-    # fundemental frequency and propagation speed of the vibration
-
-    print("_______________________________________________________")
-    print(" ")
-
-    m = 1   # mass in kg
-
-    print("slope: ", round(slope, roundnum),u" \u00B1 ", round(fit_params["std_slope"][0], roundnum), " Hz")
-    print("c = ", round(slope * 2 * stringlength, roundnum), " m/s")
-    print("µ = ", round(m / stringlength, roundnum), " kg/m")
-
+    print("Fit Parameters:")
+    
+    fit_dict = {"slope" : f"{slope: .3f} \u00B1 " + f"{std_slope: .3f} Hz" , "M" : f"{mass: 0.3f} kg"}
+    print(pd.DataFrame(fit_dict, index=[0]))
     print(" ")
     print("_______________________________________________________")
     print(" ")
 
-
-    # wavelength for mode n = 3 and n = 4
-
-    print("λ3 = ", round(stringlength * 2 / 3, roundnum), " m")
-    print("λ4 = ", round(stringlength * 2 / 4, roundnum), " m")
-    print(" ")
-    print("_______________________________________________________")
-    print(" ")
+    # individual plots
 
 
-    # plot 
-    legendtext = ("y = ("  
-                  + str(round(slope, roundnum)) +  u" \u00B1 " + str(round(fit_params["std_slope"][0], roundnum)) + ") x (" 
-                  + str(round(fit_params["y_inter"][0], roundnum))  + u" \u00B1 " + str(round(fit_params["std_inter"][0], roundnum)) 
-                  + ") \n$R^2$ = " + str(round(fit_params["R_Square"][0], roundnum)))
-                  
-    x_value = np.linspace(0, dataset["n"].max())
-    frequence = dataset["fn in Hz"]
-    mode = dataset["n"]
+    legendtext =(
+    "y = (" + f"{slope : .3f} \u00B1" + f"{std_slope : .3f} ) x (" + 
+    f"{fit_params['y_inter'][0] : 0.3f} \u00B1" + f"{fit_params['std_inter'][0]: 0.3f} ) " + 
+    "\n $R^2$ = " + f"{fit_params['R_Square'][0] : 0.3f}"
+    )
 
+    x_value = np.linspace(0, dataset["L in m"].max())
+    frequence = dataset["f1 in Hz"]
+    mode = dataset["L in m"]
     fig = plt.figure()
     ax = fig.add_subplot()
     plt.scatter(x = mode, y = frequence, marker = ".")
@@ -100,9 +83,14 @@ if __name__ == "__main__":
     ax.set_ylim(ymin=0)
     ax.set_xlim(xmin=0)
     plt.legend(loc = 'upper left')
-    plt.xlabel("n", fontsize=12)
-    plt.ylabel("$f_n$ in Hz", fontsize=12)
-    # plt.show()
+    plt.xlabel("L in m", fontsize=12)
+    plt.ylabel("$f_1$ in Hz", fontsize=12)
+    
+   
+    
+    plt.show()
 
 
-# python3 runtask1.py M12_Saitenschwingung.xlsx 0 "n" "fn in Hz" "fn in Hz" 0.02 0.01
+
+
+# python3 runtask3.py M12_Saitenschwingung.xlsx 3 "L in m" "f1 in Hz" "f1 in Hz" 0.02 0.01

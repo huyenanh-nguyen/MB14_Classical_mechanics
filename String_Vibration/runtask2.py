@@ -140,22 +140,4 @@ if __name__ == "__main__":
     plt.show()
 
 
-    # legendtext = "y = ("  + str(round(slope, roundnum)) +  u" \u00B1 " + str(round(fit_params["std_slope"][0], roundnum)) + ") x (" + str(round(fit_params["y_inter"][0], roundnum))  + u" \u00B1 " + str(round(fit_params["std_inter"][0], roundnum)) + ") \n$R^2$ = " + str(round(fit_params["R_Square"][0], roundnum))
-                  
-    # x_value = np.linspace(0, dataset["n"].max())
-    # frequence = dataset["fn in Hz"]
-    # mode = dataset["n"]
-
-    # fig = plt.figure()
-    # ax = fig.add_subplot()
-    # plt.scatter(x = mode, y = frequence, marker = ".")
-
-    # plt.plot(x_value, linearfit(x_value, np.array(slope), np.array(fit_params["y_inter"][0])), label = legendtext, color = "tab:orange")
-
-
-    # ax.set_ylim(ymin=0)
-    # ax.set_xlim(xmin=0)
-    # plt.legend(loc = 'upper left')
-    # plt.xlabel("n", fontsize=12)
-    # plt.ylabel("$f_n$ in Hz", fontsize=12)
-    # plt.show()
+# python3 runtask2.py M12_Saitenschwingung.xlsx 2 "n" "fn in Hz" "fn in Hz" 0.02 0.01
