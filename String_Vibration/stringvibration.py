@@ -85,6 +85,8 @@ class Guitarstring:
 
         Returns:
             DataFrame: Returning slope, y_interception, standard deviation of those two parameters and R_Square from the linear fit 
+                        >>>     slope   y_inter  std_slope  std_inter  R_Square
+                            0  164.85 -4.916668   0.105221    0.59211  0.999997
         """
 
         data = self.excel_dataframes()[taskindex]
@@ -149,7 +151,7 @@ excel = PurePath(str(Path.cwd()) + "/M12_Saitenschwingung.xlsx")
 string = Guitarstring(excel)
 
 # print(string.excel_dataframes()[3])
-# print(string.resonancefit_params(3, "n", "fn in Hz"))
+# print(string.resonancefit_params(0, "n", "fn in Hz"))
 
 
 ########

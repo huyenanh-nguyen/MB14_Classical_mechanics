@@ -34,74 +34,75 @@ if __name__ == "__main__":
 
     string = Guitarstring(excelpath)
 
-    statsticset = string.excel_dataframes()[taskindex][valueset]
-    statistics = Statistics(statsticset)
+    
+    statisticset = [string.excel_dataframes()[taskindex][i][valueset] for i in range(3)]
+
+    statistics = [Statistics(statisticset[i]) for i in range(3)]
+    
 
     dataset = string.excel_dataframes()[taskindex]
 
-    fit_params = []
+    fit_params = string.resonancefit_params(taskindex, x_column, y_column)
 
-    for i in range(3):
-        fit_params.append(string.resonancefit_params(taskindex, x_column, y_column))
-
-    slope = fit_params["slope"][0]  # slope of the fit
-    stringlength = dataset["L in m"].unique()[0]    # length of the string
+    # slope = fit_params["slope"][0]  # slope of the fit
+    # stringlength = dataset["L in m"].unique()[0]    # length of the string
 
 
     print("_______________________________________________________")
     print(" ")
+    print(statisticset)
     print(fit_params)
     print("_______________________________________________________")
     print(" ")
 
-    roundnum = 3
-    print("dont know if we need that:")
-    print("f_n(mean) in Hz : ", round(statistics.std_mean(), roundnum))
-    print("f_n(sdt) in Hz : ",round(statistics.std_dev(), roundnum))
-    print("f_n(confidenveinterval) in Hz : ",round(statistics.confidence_interval(), roundnum))
+    # roundnum = 3
+    # print("dont know if we need that:")
+    # print("f_n(mean) in Hz : ", round(statistics.std_mean(), roundnum))
+    # print("f_n(sdt) in Hz : ",round(statistics.std_dev(), roundnum))
+    # print("f_n(confidenveinterval) in Hz : ",round(statistics.confidence_interval(), roundnum))
 
-    # fundemental frequency and propagation speed of the vibration
+    # # fundemental frequency and propagation speed of the vibration
 
-    print("_______________________________________________________")
-    print(" ")
+    # print("_______________________________________________________")
+    # print(" ")
 
-    m = 1   # mass in kg
+    # m = 1   # mass in kg
 
-    print("slope: ", round(slope, roundnum),u" \u00B1 ", round(fit_params["std_slope"][0], roundnum), " Hz")
-    print("c = ", round(slope * 2 * stringlength, roundnum), " m/s")
-    print("µ = ", round(m / stringlength, roundnum), " kg/m")
+    # print("slope: ", round(slope, roundnum),u" \u00B1 ", round(fit_params["std_slope"][0], roundnum), " Hz")
+    # print("c = ", round(slope * 2 * stringlength, roundnum), " m/s")
+    # print("µ = ", round(m / stringlength, roundnum), " kg/m")
 
-    print(" ")
-    print("_______________________________________________________")
-    print(" ")
-
-
-    # wavelength for mode n = 3 and n = 4
-
-    print("λ3 = ", round(stringlength * 2 / 3, roundnum), " m")
-    print("λ4 = ", round(stringlength * 2 / 4, roundnum), " m")
-    print(" ")
-    print("_______________________________________________________")
-    print(" ")
+    # print(" ")
+    # print("_______________________________________________________")
+    # print(" ")
 
 
-    # plot 
-    legendtext = "y = ("  + str(round(slope, roundnum)) +  u" \u00B1 " + str(round(fit_params["std_slope"][0], roundnum)) + ") x (" + str(round(fit_params["y_inter"][0], roundnum))  + u" \u00B1 " + str(round(fit_params["std_inter"][0], roundnum)) + ") \n$R^2$ = " + str(round(fit_params["R_Square"][0], roundnum))
+    # # wavelength for mode n = 3 and n = 4
+
+    # print("λ3 = ", round(stringlength * 2 / 3, roundnum), " m")
+    # print("λ4 = ", round(stringlength * 2 / 4, roundnum), " m")
+    # print(" ")
+    # print("_______________________________________________________")
+    # print(" ")
+
+
+    # # plot 
+    # legendtext = "y = ("  + str(round(slope, roundnum)) +  u" \u00B1 " + str(round(fit_params["std_slope"][0], roundnum)) + ") x (" + str(round(fit_params["y_inter"][0], roundnum))  + u" \u00B1 " + str(round(fit_params["std_inter"][0], roundnum)) + ") \n$R^2$ = " + str(round(fit_params["R_Square"][0], roundnum))
                   
-    x_value = np.linspace(0, dataset["n"].max())
-    frequence = dataset["fn in Hz"]
-    mode = dataset["n"]
+    # x_value = np.linspace(0, dataset["n"].max())
+    # frequence = dataset["fn in Hz"]
+    # mode = dataset["n"]
 
-    fig = plt.figure()
-    ax = fig.add_subplot()
-    plt.scatter(x = mode, y = frequence, marker = ".")
+    # fig = plt.figure()
+    # ax = fig.add_subplot()
+    # plt.scatter(x = mode, y = frequence, marker = ".")
 
-    plt.plot(x_value, linearfit(x_value, np.array(slope), np.array(fit_params["y_inter"][0])), label = legendtext, color = "tab:orange")
+    # plt.plot(x_value, linearfit(x_value, np.array(slope), np.array(fit_params["y_inter"][0])), label = legendtext, color = "tab:orange")
 
 
-    ax.set_ylim(ymin=0)
-    ax.set_xlim(xmin=0)
-    plt.legend(loc = 'upper left')
-    plt.xlabel("n", fontsize=12)
-    plt.ylabel("$f_n$ in Hz", fontsize=12)
+    # ax.set_ylim(ymin=0)
+    # ax.set_xlim(xmin=0)
+    # plt.legend(loc = 'upper left')
+    # plt.xlabel("n", fontsize=12)
+    # plt.ylabel("$f_n$ in Hz", fontsize=12)
     # plt.show()
