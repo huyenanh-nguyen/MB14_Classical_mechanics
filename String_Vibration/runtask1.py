@@ -81,7 +81,10 @@ if __name__ == "__main__":
 
 
     # plot 
-    legendtext = "y = ("  + str(round(slope, roundnum)) +  u" \u00B1 " + str(round(fit_params["std_slope"][0], roundnum)) + ") x (" + str(round(fit_params["y_inter"][0], roundnum))  + u" \u00B1 " + str(round(fit_params["std_inter"][0], roundnum)) + ") \n$R^2$ = " + str(round(fit_params["R_Square"][0], roundnum))
+    legendtext = ("y = ("  
+                  + str(round(slope, roundnum)) +  u" \u00B1 " + str(round(fit_params["std_slope"][0], roundnum)) + ") x (" 
+                  + str(round(fit_params["y_inter"][0], roundnum))  + u" \u00B1 " + str(round(fit_params["std_inter"][0], roundnum)) 
+                  + ") \n$R^2$ = " + str(round(fit_params["R_Square"][0], roundnum)))
                   
     x_value = np.linspace(0, dataset["n"].max())
     frequence = dataset["fn in Hz"]

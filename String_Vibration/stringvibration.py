@@ -150,7 +150,7 @@ excel = PurePath(str(Path.cwd()) + "/M12_Saitenschwingung.xlsx")
 
 string = Guitarstring(excel)
 
-# print(string.excel_dataframes()[3])
+# print(string.excel_dataframes()[2])
 # print(string.resonancefit_params(0, "n", "fn in Hz"))
 
 

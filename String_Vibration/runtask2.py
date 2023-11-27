@@ -4,6 +4,7 @@ from stringvibration import Guitarstring
 from MathKit import Statistics
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 from matplotlib.ticker import FormatStrFormatter
 
 def linearfit(x, m, b):
@@ -32,10 +33,11 @@ if __name__ == "__main__":
     systematic_error_ruler = args.systematic_error_ruler
 
 
+    roundnum = 3
     string = Guitarstring(excelpath)
 
     
-    statisticset = [string.excel_dataframes()[taskindex][i][valueset] for i in range(3)]
+    statisticset = [string.excel_dataframes()[taskindex][i][valueset] for i in range(3)]    # Valuelist for each "fn in Hz" column
 
     statistics = [Statistics(statisticset[i]) for i in range(3)]
     
@@ -44,49 +46,100 @@ if __name__ == "__main__":
 
     fit_params = string.resonancefit_params(taskindex, x_column, y_column)
 
-    # slope = fit_params["slope"][0]  # slope of the fit
-    # stringlength = dataset["L in m"].unique()[0]    # length of the string
-
+    slope = [fit_params[i]["slope"][0] for i in range(3)]  # slope of the fit
+    std_slope = [fit_params[i]["std_slope"][0] for i in range(3)]
+    stringlength = [dataset[i]["L in m"].unique()[0] for i in range(3)]    # length of the string
+    mass = [dataset[i]["M in kg"].unique()[0] for i in range(3)]
 
     print("_______________________________________________________")
     print(" ")
-    print(statisticset)
+    print("Fit Parameters:")
+    
+    fit_dict = {"slope" : {}, "c" : {}, "µ" : {}, "M" : {}}
+    for i in range(3):
+        fit_dict["slope"][i] =  f"{slope[i] : .3f} \u00B1" + f"{std_slope[i] : .3f} Hz"
+        fit_dict["c"][i] = f"{slope[i] * 2 * stringlength[i] : .3f} m/s"
+        fit_dict["µ"][i] = f"{mass[i] / stringlength[i]: .3f} kg/m"
+        fit_dict["M"][i] = f"{mass[i] : .3f} kg"
+
+    fit_df = pd.DataFrame(fit_dict)
+    print(" ")
+    print("_______________________________________________________")
     print(fit_params)
-    print("_______________________________________________________")
-    print(" ")
 
-    # roundnum = 3
-    # print("dont know if we need that:")
-    # print("f_n(mean) in Hz : ", round(statistics.std_mean(), roundnum))
-    # print("f_n(sdt) in Hz : ",round(statistics.std_dev(), roundnum))
-    # print("f_n(confidenveinterval) in Hz : ",round(statistics.confidence_interval(), roundnum))
+    # individual plots
 
-    # # fundemental frequency and propagation speed of the vibration
+    for i in range(3):
+        legendtext =(
+            "y = (" + f"{slope[i] : .3f} \u00B1" + f"{std_slope[i] : .3f} ) x (" + 
+            f"{fit_params[i]['y_inter'][0] : 0.3f} \u00B1" + f"{fit_params[i]['std_inter'][0]: 0.3f} ) " + 
+            "\n $R^2$ = " + f"{fit_params[i]['R_Square'][0] : 0.3f}"
+            )
+    
+        x_value = np.linspace(0, dataset[i]["n"].max())
+        frequence = dataset[i]["fn in Hz"]
+        mode = dataset[i]["n"]
+        fig = plt.figure()
+        ax = fig.add_subplot()
+        plt.scatter(x = mode, y = frequence, marker = ".")
 
-    # print("_______________________________________________________")
-    # print(" ")
-
-    # m = 1   # mass in kg
-
-    # print("slope: ", round(slope, roundnum),u" \u00B1 ", round(fit_params["std_slope"][0], roundnum), " Hz")
-    # print("c = ", round(slope * 2 * stringlength, roundnum), " m/s")
-    # print("µ = ", round(m / stringlength, roundnum), " kg/m")
-
-    # print(" ")
-    # print("_______________________________________________________")
-    # print(" ")
+        plt.plot(x_value, linearfit(x_value, np.array(slope[i]), np.array(fit_params[i]["y_inter"][0])), label = legendtext, color = "tab:orange")
 
 
-    # # wavelength for mode n = 3 and n = 4
+        ax.set_ylim(ymin=0)
+        ax.set_xlim(xmin=0)
+        plt.legend(loc = 'upper left')
+        plt.xlabel("n", fontsize=12)
+        plt.ylabel("$f_n$ in Hz", fontsize=12)
+    
+    # plt.show()
 
-    # print("λ3 = ", round(stringlength * 2 / 3, roundnum), " m")
-    # print("λ4 = ", round(stringlength * 2 / 4, roundnum), " m")
-    # print(" ")
-    # print("_______________________________________________________")
-    # print(" ")
+    # combined plots
+
+    legendtext_1 =(
+            "y(M=" + f"{mass[0]: 0.1f} kg ) = (" + f"{slope[0] : .3f} \u00B1" + f"{std_slope[0] : .3f} ) x (" + 
+            f"{fit_params[0]['y_inter'][0] : 0.3f} \u00B1" + f"{fit_params[0]['std_inter'][0]: 0.3f} ) " + 
+            "\n $R^2$ = " + f"{fit_params[0]['R_Square'][0] : 0.3f}"
+            )
+    legendtext_2 =(
+            "y(M=" + f"{mass[1]: 0.1f} kg ) = (" + f"{slope[1] : .3f} \u00B1" + f"{std_slope[1] : .3f} ) x (" + 
+            f"{fit_params[1]['y_inter'][0] : 0.3f} \u00B1" + f"{fit_params[1]['std_inter'][0]: 0.3f} ) " + 
+            "\n $R^2$ = " + f"{fit_params[1]['R_Square'][0] : 0.3f}"
+            )
+    legendtext_3 =(
+            "y(M=" + f"{mass[2]: 0.1f} kg ) = (" + f"{slope[2] : .3f} \u00B1" + f"{std_slope[2] : .3f} ) x (" + 
+            f"{fit_params[2]['y_inter'][0] : 0.3f} \u00B1" + f"{fit_params[2]['std_inter'][0]: 0.3f} ) " + 
+            "\n $R^2$ = " + f"{fit_params[2]['R_Square'][0] : 0.3f}"
+            )
+    
+    x_value = np.linspace(0, dataset[0]["n"].max())
+
+    frequence_1 = dataset[0]["fn in Hz"]
+    frequence_2 = dataset[1]["fn in Hz"]
+    frequence_3 = dataset[2]["fn in Hz"]
+
+    mode_1 = dataset[0]["n"]
+    mode_2 = dataset[1]["n"]
+    mode_3 = dataset[2]["n"]
+    fig = plt.figure()
+    ax = fig.add_subplot()
+    plt.scatter(x = mode_1, y = frequence_1, marker = ".")
+    plt.scatter(x = mode_2, y = frequence_2, marker = ".")
+    plt.scatter(x = mode_3, y = frequence_3, marker = ".")
+
+    plt.plot(x_value, linearfit(x_value, np.array(slope[0]), np.array(fit_params[0]["y_inter"][0])), label = legendtext_1)
+    plt.plot(x_value, linearfit(x_value, np.array(slope[1]), np.array(fit_params[1]["y_inter"][0])), label = legendtext_2)
+    plt.plot(x_value, linearfit(x_value, np.array(slope[2]), np.array(fit_params[2]["y_inter"][0])), label = legendtext_3)
+    
+    ax.set_ylim(ymin=0)
+    ax.set_xlim(xmin=0)
+    plt.legend(loc = 'upper left')
+    plt.xlabel("n", fontsize=12)
+    plt.ylabel("$f_n$ in Hz", fontsize=12)
+    
+    plt.show()
 
 
-    # # plot 
     # legendtext = "y = ("  + str(round(slope, roundnum)) +  u" \u00B1 " + str(round(fit_params["std_slope"][0], roundnum)) + ") x (" + str(round(fit_params["y_inter"][0], roundnum))  + u" \u00B1 " + str(round(fit_params["std_inter"][0], roundnum)) + ") \n$R^2$ = " + str(round(fit_params["R_Square"][0], roundnum))
                   
     # x_value = np.linspace(0, dataset["n"].max())
