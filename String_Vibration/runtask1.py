@@ -6,8 +6,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FormatStrFormatter
 
-def linearfit(x, m, b):
-    return m * x + b
+def linearfit(x, m):
+    return m * x 
 
 # terminal script:
 
@@ -30,6 +30,9 @@ if __name__ == "__main__":
     valueset = args.valueset
     systematic_error_frequence = args.systematic_error_frequence
     systematic_error_ruler = args.systematic_error_ruler
+
+    m_string = 0.01 # mass in kg
+
 
     string = Guitarstring(excelpath)
 
@@ -63,7 +66,8 @@ if __name__ == "__main__":
     m = 1   # mass in kg
 
     print("slope: ", round(slope, roundnum),u" \u00B1 ", round(fit_params["std_slope"][0], roundnum), " Hz")
-    print("c = ", round(slope * 2 * stringlength, roundnum), " m/s")
+    print("c = ", round(slope * 2 * stringlength, roundnum), " m/s")    # ???
+    print("c(trans)= ", np.sqrt((9.81 * m * stringlength) / m_string))  # ???
     print("µ = ", round(m / stringlength, roundnum), " kg/m")
 
     print(" ")
@@ -82,9 +86,8 @@ if __name__ == "__main__":
 
     # plot 
     legendtext = ("y = ("  
-                  + str(round(slope, roundnum)) +  u" \u00B1 " + str(round(fit_params["std_slope"][0], roundnum)) + ") x (" 
-                  + str(round(fit_params["y_inter"][0], roundnum))  + u" \u00B1 " + str(round(fit_params["std_inter"][0], roundnum)) 
-                  + ") \n$R^2$ = " + str(round(fit_params["R_Square"][0], roundnum)))
+                  + str(round(slope, roundnum)) +  u" \u00B1 " + str(round(fit_params["std_slope"][0], roundnum)) + ") x" 
+                  + " \n$R^2$ = " + str(round(fit_params["R_Square"][0], roundnum)))
                   
     x_value = np.linspace(0, dataset["n"].max())
     frequence = dataset["fn in Hz"]
@@ -94,7 +97,7 @@ if __name__ == "__main__":
     ax = fig.add_subplot()
     plt.scatter(x = mode, y = frequence, marker = ".")
 
-    plt.plot(x_value, linearfit(x_value, np.array(slope), np.array(fit_params["y_inter"][0])), label = legendtext, color = "tab:orange")
+    plt.plot(x_value, linearfit(x_value, np.array(slope)), label = legendtext, color = "tab:orange")
 
 
     ax.set_ylim(ymin=0)
@@ -102,7 +105,7 @@ if __name__ == "__main__":
     plt.legend(loc = 'upper left')
     plt.xlabel("n", fontsize=12)
     plt.ylabel("$f_n$ in Hz", fontsize=12)
-    # plt.show()
+    plt.show()
 
 
 # python3 runtask1.py M12_Saitenschwingung.xlsx 0 "n" "fn in Hz" "fn in Hz" 0.02 0.01

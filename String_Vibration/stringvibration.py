@@ -11,8 +11,8 @@ def search(header : pd.DataFrame, substring: str, case: bool=False):
     return header.loc[mask.any(axis = 1)]
 
 
-def linearfit(x, m, b):
-    return m * x + b
+def linearfit(x, m):
+    return m * x
 
 
 class Guitarstring:
@@ -103,7 +103,7 @@ class Guitarstring:
 
             std = np.sqrt(np.diag(pcov))
 
-            data = {"slope": popt[0], "y_inter": popt[1], "std_slope": std[0], "std_inter": std[1], "R_Square": r_square}
+            data = {"slope": popt[0], "std_slope": std[0], "R_Square": r_square}
             resonancefit = pd.DataFrame(data, index=[0])
 
             return resonancefit
@@ -131,7 +131,7 @@ class Guitarstring:
 
                 std = np.sqrt(np.diag(pcov))
 
-                data = {"slope": popt[0], "y_inter": popt[1], "std_slope": std[0], "std_inter": std[1], "R_Square": r_square}
+                data = {"slope": popt[0], "std_slope": std[0], "R_Square": r_square}
                 resonancefit = pd.DataFrame(data, index=[0])
                 resonance_list.append(resonancefit)
 
@@ -149,7 +149,7 @@ excel = PurePath(str(Path.cwd()) + "/M12_Saitenschwingung.xlsx")
 string = Guitarstring(excel)
 
 # print(string.excel_dataframes()[3])
-# print(string.resonancefit_params(0, "n", "fn in Hz"))
+print(string.resonancefit_params(0, "n", "fn in Hz"))
 
 
 ########

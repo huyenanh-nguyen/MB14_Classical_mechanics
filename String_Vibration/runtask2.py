@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib.ticker import FormatStrFormatter
 
-def linearfit(x, m, b):
-    return m * x + b
+def linearfit(x, m):
+    return m * x
 
 # terminal script:
 
@@ -72,7 +72,7 @@ if __name__ == "__main__":
     for i in range(3):
         legendtext =(
             "y = (" + f"{slope[i] : .3f} \u00B1" + f"{std_slope[i] : .3f} ) x (" + 
-            f"{fit_params[i]['y_inter'][0] : 0.3f} \u00B1" + f"{fit_params[i]['std_inter'][0]: 0.3f} ) " + 
+
             "\n $R^2$ = " + f"{fit_params[i]['R_Square'][0] : 0.3f}"
             )
     
@@ -83,7 +83,7 @@ if __name__ == "__main__":
         ax = fig.add_subplot()
         plt.scatter(x = mode, y = frequence, marker = ".")
 
-        plt.plot(x_value, linearfit(x_value, np.array(slope[i]), np.array(fit_params[i]["y_inter"][0])), label = legendtext, color = "tab:orange")
+        plt.plot(x_value, linearfit(x_value, np.array(slope[i])), label = legendtext, color = "tab:orange")
 
 
         ax.set_ylim(ymin=0)
@@ -98,17 +98,14 @@ if __name__ == "__main__":
 
     legendtext_1 =(
             "y(M=" + f"{mass[0]: 0.1f} kg ) = (" + f"{slope[0] : .3f} \u00B1" + f"{std_slope[0] : .3f} ) x (" + 
-            f"{fit_params[0]['y_inter'][0] : 0.3f} \u00B1" + f"{fit_params[0]['std_inter'][0]: 0.3f} ) " + 
             "\n $R^2$ = " + f"{fit_params[0]['R_Square'][0] : 0.3f}"
             )
     legendtext_2 =(
             "y(M=" + f"{mass[1]: 0.1f} kg ) = (" + f"{slope[1] : .3f} \u00B1" + f"{std_slope[1] : .3f} ) x (" + 
-            f"{fit_params[1]['y_inter'][0] : 0.3f} \u00B1" + f"{fit_params[1]['std_inter'][0]: 0.3f} ) " + 
             "\n $R^2$ = " + f"{fit_params[1]['R_Square'][0] : 0.3f}"
             )
     legendtext_3 =(
             "y(M=" + f"{mass[2]: 0.1f} kg ) = (" + f"{slope[2] : .3f} \u00B1" + f"{std_slope[2] : .3f} ) x (" + 
-            f"{fit_params[2]['y_inter'][0] : 0.3f} \u00B1" + f"{fit_params[2]['std_inter'][0]: 0.3f} ) " + 
             "\n $R^2$ = " + f"{fit_params[2]['R_Square'][0] : 0.3f}"
             )
     
@@ -127,9 +124,9 @@ if __name__ == "__main__":
     plt.scatter(x = mode_2, y = frequence_2, marker = ".")
     plt.scatter(x = mode_3, y = frequence_3, marker = ".")
 
-    plt.plot(x_value, linearfit(x_value, np.array(slope[0]), np.array(fit_params[0]["y_inter"][0])), label = legendtext_1)
-    plt.plot(x_value, linearfit(x_value, np.array(slope[1]), np.array(fit_params[1]["y_inter"][0])), label = legendtext_2)
-    plt.plot(x_value, linearfit(x_value, np.array(slope[2]), np.array(fit_params[2]["y_inter"][0])), label = legendtext_3)
+    plt.plot(x_value, linearfit(x_value, np.array(slope[0])), label = legendtext_1)
+    plt.plot(x_value, linearfit(x_value, np.array(slope[1])), label = legendtext_2)
+    plt.plot(x_value, linearfit(x_value, np.array(slope[2])), label = legendtext_3)
     
     ax.set_ylim(ymin=0)
     ax.set_xlim(xmin=0)
