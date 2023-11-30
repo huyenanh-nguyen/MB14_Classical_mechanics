@@ -89,7 +89,7 @@ if __name__ == "__main__":
                   + str(round(slope, roundnum)) +  u" \u00B1 " + str(round(fit_params["std_slope"][0], roundnum)) + ") x" 
                   + " \n$R^2$ = " + str(round(fit_params["R_Square"][0], roundnum)))
                   
-    x_value = np.linspace(0, dataset["n"].max())
+    x_value = np.linspace(0, 10)
     frequence = dataset["fn in Hz"]
     mode = dataset["n"]
 

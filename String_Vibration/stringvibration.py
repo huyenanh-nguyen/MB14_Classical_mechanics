@@ -14,6 +14,9 @@ def search(header : pd.DataFrame, substring: str, case: bool=False):
 def linearfit(x, m):
     return m * x
 
+def task4_fit(n, Fo, L, µ):
+    return (n / 2*L) * np.sqrt((Fo / µ))
+
 
 class Guitarstring:
     """
@@ -138,6 +141,23 @@ class Guitarstring:
 
 
             return resonance_list
+        
+
+    def task4_fit_params(self, taskindex : int, x_column : str, y_column : str):
+        data = self.excel_dataframes()[taskindex]
+        x_value = data[x_column]
+        y_value = data[y_column]
+
+        f0 = data["F0 in N"]
+        popt, pcov = curve_fit(task4_fit, x_value, y_value)
+        residuals = y_value - task4_fit(np.asarray(x_value), *popt)
+        ss_res = np.sum(residuals ** 2)
+        ss_total = np.sum((y_value - np.mean(y_value)) ** 2)
+        r_square = 1 - (ss_res / ss_total)
+
+        std = np.sqrt(np.diag(pcov))
+
+        return  "popt:", popt, "std:" , std, r_square
 
 
 ############
@@ -148,8 +168,8 @@ excel = PurePath(str(Path.cwd()) + "/M12_Saitenschwingung.xlsx")
 
 string = Guitarstring(excel)
 
-# print(string.excel_dataframes()[3])
-print(string.resonancefit_params(0, "n", "fn in Hz"))
+print(string.excel_dataframes()[4])
+print(string.task4_fit_params(4, "fn in Hz", "M in kg"))
 
 
 ########
