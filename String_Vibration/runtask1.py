@@ -48,6 +48,8 @@ if __name__ == "__main__":
 
     print("_______________________________________________________")
     print(" ")
+    print(" Task 1 ")
+    print(" ")
     print(fit_params)
     print("_______________________________________________________")
     print(" ")
@@ -84,7 +86,7 @@ if __name__ == "__main__":
     # plot 
     legendtext = ("f(n) = ("  
                   + str(round(slope, roundnum)) +  u" \u00B1 " + str(round(fit_params["std_slope"][0], roundnum)) + ") n" 
-                  + " \n$R^2$ = " + f"{fit_params['R_Square'][0]: 0.4f}")
+                  + "\n$R^2$ = " + f"{fit_params['R_Square'][0]: 0.4f}")
                   
     x_value = np.linspace(0, 10)
     frequence = dataset["fn in Hz"]

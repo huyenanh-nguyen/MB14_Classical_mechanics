@@ -61,12 +61,12 @@ class Guitarstring:
         table = pd.read_excel(excel, sheet_name= "Task 2", header = None, skiprows=4).dropna(axis = 1, how = "all")
         table.columns = columnheader
 
-        col_index = [0, 4, 8] # columnindex for the header "fn in Hz" 
+        col_index = [0, 5, 10] # columnindex for the header "fn in Hz" 
 
         task2_dataframes = []   # contains all tables in a list
 
         for i in col_index:
-            task2_dataframes.append(table.iloc[:,i : i+4])
+            task2_dataframes.append(table.iloc[:,i : i+5])
 
         # End Task 2
 
@@ -178,8 +178,8 @@ excel = PurePath(str(Path.cwd()) + "/M12_Saitenschwingung.xlsx")
 
 string = Guitarstring(excel)
 
-# print(string.excel_dataframes()[0])
-# print(string.task4_fit_params(4, "fn in Hz", "F0 in N"))
+# print(string.excel_dataframes()[2][2])
+# print(string.resonancefit_params(3, "fn in Hz", "F0 in N"))
 
 
 ########

@@ -50,30 +50,36 @@ if __name__ == "__main__":
     std_slope = [fit_params[i]["std_slope"][0] for i in range(3)]
     stringlength = [dataset[i]["L in m"].unique()[0] for i in range(3)]    # length of the string
     mass = [dataset[i]["M in kg"].unique()[0] for i in range(3)]
-
+    f0 = [dataset[i]["F0 in N"].unique()[0] for i in range(3)]
     print("_______________________________________________________")
+    print(" ")
+    print(" Task 2 ")
     print(" ")
     print("Fit Parameters:")
     
-    fit_dict = {"slope" : {}, "c" : {}, "µ" : {}, "M" : {}}
+    
+
+    # f0 /c ** 2
+    fit_dict = {"slope" : {}, "c" : {}, "µ" : {}, "M" : {}, "F0" : {}}
     for i in range(3):
         fit_dict["slope"][i] =  f"{slope[i] : .3f} \u00B1" + f"{std_slope[i] : .3f} Hz"
         fit_dict["c"][i] = f"{slope[i] * 2 * stringlength[i] : .3f} m/s"
-        fit_dict["µ"][i] = f"{mass[i] / stringlength[i]: .3f} kg/m"
+        fit_dict["µ"][i] = f"{f0[i] / (slope[i] * 2 * stringlength[i]) ** 2: .3f} kg/m"
         fit_dict["M"][i] = f"{mass[i] : .3f} kg"
+        fit_dict["F0"][i] = f"{f0[i] : .3f} kg"
 
     fit_df = pd.DataFrame(fit_dict)
     print(" ")
     print("_______________________________________________________")
-    print(fit_params)
+    print(fit_df)
 
     # individual plots
 
     for i in range(3):
         legendtext =(
-            "y = (" + f"{slope[i] : .3f} \u00B1" + f"{std_slope[i] : .3f} ) x (" + 
+            "f(n) = (" + f"{slope[i] : .3f} \u00B1" + f"{std_slope[i] : .3f} ) n" + 
 
-            "\n $R^2$ = " + f"{fit_params[i]['R_Square'][0] : 0.3f}"
+            "\n$R^2$ = " + f"{fit_params[i]['R_Square'][0] : 0.3f}"
             )
     
         x_value = np.linspace(0, dataset[i]["n"].max())
@@ -97,16 +103,16 @@ if __name__ == "__main__":
     # combined plots
 
     legendtext_1 =(
-            "y(M=" + f"{mass[0]: 0.1f} kg ) = (" + f"{slope[0] : .3f} \u00B1" + f"{std_slope[0] : .3f} ) x (" + 
-            "\n $R^2$ = " + f"{fit_params[0]['R_Square'][0] : 0.3f}"
+            "f(M:" + f"{mass[0]: 0.1f} kg ) = (" + f"{slope[0] : .3f} \u00B1" + f"{std_slope[0] : .3f} ) n" + 
+            "\n$R^2$ = " + f"{fit_params[0]['R_Square'][0] : 0.4f}"
             )
     legendtext_2 =(
-            "y(M=" + f"{mass[1]: 0.1f} kg ) = (" + f"{slope[1] : .3f} \u00B1" + f"{std_slope[1] : .3f} ) x (" + 
-            "\n $R^2$ = " + f"{fit_params[1]['R_Square'][0] : 0.3f}"
+            "f(M:" + f"{mass[1]: 0.1f} kg ) = (" + f"{slope[1] : .3f} \u00B1" + f"{std_slope[1] : .3f} ) n" + 
+            "\n$R^2$ = " + f"{fit_params[1]['R_Square'][0] : 0.4f}"
             )
     legendtext_3 =(
-            "y(M=" + f"{mass[2]: 0.1f} kg ) = (" + f"{slope[2] : .3f} \u00B1" + f"{std_slope[2] : .3f} ) x (" + 
-            "\n $R^2$ = " + f"{fit_params[2]['R_Square'][0] : 0.3f}"
+            "f(M:" + f"{mass[2]: 0.1f} kg ) = (" + f"{slope[2] : .3f} \u00B1" + f"{std_slope[2] : .3f} ) n" + 
+            "\n$R^2$ = " + f"{fit_params[2]['R_Square'][0] : 0.4f}"
             )
     
     x_value = np.linspace(0, dataset[0]["n"].max())
@@ -137,4 +143,4 @@ if __name__ == "__main__":
     plt.show()
 
 
-# python3 runtask2.py M12_Saitenschwingung.xlsx 2 "n" "fn in Hz" "fn in Hz" 0.02 0.01
+# python3 runtask2.py M12_Saitenschwingung.xlsx 2 "n" "fn in Hz" "fn in Hz" 0.03 0.01
