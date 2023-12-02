@@ -53,22 +53,19 @@ if __name__ == "__main__":
     print(" ")
 
     roundnum = 3
-    print("dont know if we need that:")
-    print("f_n(mean) in Hz : ", round(statistics.std_mean(), roundnum))
-    print("f_n(sdt) in Hz : ",round(statistics.std_dev(), roundnum))
-    print("f_n(confidenveinterval) in Hz : ",round(statistics.confidence_interval(), roundnum))
-
     # fundemental frequency and propagation speed of the vibration
 
     print("_______________________________________________________")
     print(" ")
 
     m = 1   # mass in kg
+    c = slope * 2 * stringlength
+    f0 = dataset["F0 in N"].unique()[0]
 
     print("slope: ", round(slope, roundnum),u" \u00B1 ", round(fit_params["std_slope"][0], roundnum), " Hz")
-    print("c = ", round(slope * 2 * stringlength, roundnum), " m/s")    # ???
-    print("c(trans)= ", np.sqrt((9.81 * m * stringlength) / m_string))  # ???
-    print("µ = ", round(m / stringlength, roundnum), " kg/m")
+    print("c = ", round(c, roundnum), " m/s")  
+    print("µ(f0 / c^2) = ", round(f0 /c ** 2, roundnum), " kg/m")
+    print("µ(slope,script) = ", round((f0 /(slope ** 2 * 4 * stringlength ** 2)), roundnum), " kg/m")
 
     print(" ")
     print("_______________________________________________________")
@@ -85,9 +82,9 @@ if __name__ == "__main__":
 
 
     # plot 
-    legendtext = ("y = ("  
-                  + str(round(slope, roundnum)) +  u" \u00B1 " + str(round(fit_params["std_slope"][0], roundnum)) + ") x" 
-                  + " \n$R^2$ = " + str(round(fit_params["R_Square"][0], roundnum)))
+    legendtext = ("f(n) = ("  
+                  + str(round(slope, roundnum)) +  u" \u00B1 " + str(round(fit_params["std_slope"][0], roundnum)) + ") n" 
+                  + " \n$R^2$ = " + f"{fit_params['R_Square'][0]: 0.4f}")
                   
     x_value = np.linspace(0, 10)
     frequence = dataset["fn in Hz"]
@@ -98,7 +95,7 @@ if __name__ == "__main__":
     plt.scatter(x = mode, y = frequence, marker = ".")
 
     plt.plot(x_value, linearfit(x_value, np.array(slope)), label = legendtext, color = "tab:orange")
-
+    plt.errorbar(x = mode, y= frequence, yerr = np.repeat(0.3, len(dataset["L in m"])),fmt=' ', capsize=3, color = "dimgrey")
 
     ax.set_ylim(ymin=0)
     ax.set_xlim(xmin=0)
@@ -108,4 +105,4 @@ if __name__ == "__main__":
     plt.show()
 
 
-# python3 runtask1.py M12_Saitenschwingung.xlsx 0 "n" "fn in Hz" "fn in Hz" 0.02 0.01
+# python3 runtask1.py M12_Saitenschwingung.xlsx 0 "n" "fn in Hz" "fn in Hz" 0.03 0.01

@@ -14,7 +14,7 @@ def search(header : pd.DataFrame, substring: str, case: bool=False):
 def linearfit(x, m):
     return m * x
 
-def task4_fit(n, Fo, L, µ):
+def task4_fit(Fo, n, L, µ):
     return (n / 2*L) * np.sqrt((Fo / µ))
 
 
@@ -49,7 +49,7 @@ class Guitarstring:
             List: List full of dataframes
         """
         excel = self.excelpath
-        task1_table1 = pd.read_excel(excel, sheet_name = "Task 1", skiprows=3).iloc[0:9,np.arange(1,5)].dropna(axis = 0, how = 'all')
+        task1_table1 = pd.read_excel(excel, sheet_name = "Task 1", skiprows=3).iloc[0:9,np.arange(1,6)].dropna(axis = 0, how = 'all')
         task1_table2 = pd.read_excel(excel, sheet_name = "Task 1", skiprows=17).iloc[0:10,np.arange(1,4)].dropna(axis = 0, how = 'all')
 
         # Start Task 2
@@ -144,11 +144,21 @@ class Guitarstring:
         
 
     def task4_fit_params(self, taskindex : int, x_column : str, y_column : str):
+        """there is a another way to fit the data.
+        In Task 4 we should use this fit f(n) = (n / 2*L) * np.sqrt(F0 / µ)
+
+        Args:
+            taskindex (int): index of the task -> Task1 = 0 & 1, Task2 = 2, Task3 = 3, Task 4 = 4
+            x_column (str): Name of the Column where the x_values are
+            y_column (str): Name of the Column where the y_values are
+
+        Returns:
+            List: _description_
+        """
         data = self.excel_dataframes()[taskindex]
         x_value = data[x_column]
         y_value = data[y_column]
 
-        f0 = data["F0 in N"]
         popt, pcov = curve_fit(task4_fit, x_value, y_value)
         residuals = y_value - task4_fit(np.asarray(x_value), *popt)
         ss_res = np.sum(residuals ** 2)
@@ -168,8 +178,8 @@ excel = PurePath(str(Path.cwd()) + "/M12_Saitenschwingung.xlsx")
 
 string = Guitarstring(excel)
 
-print(string.excel_dataframes()[4])
-print(string.task4_fit_params(4, "fn in Hz", "M in kg"))
+# print(string.excel_dataframes()[0])
+# print(string.task4_fit_params(4, "fn in Hz", "F0 in N"))
 
 
 ########
