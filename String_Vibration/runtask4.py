@@ -32,3 +32,10 @@ if __name__ == "__main__":
     valueset = args.valueset
     systematic_error_frequence = args.systematic_error_frequence
     systematic_error_ruler = args.systematic_error_ruler
+
+    roundnum = 3
+    string = Guitarstring(excelpath)
+
+    print(string.resonancefit_params(taskindex, x_column, y_column))
+
+    # python3 runtask4.py M12_Saitenschwingung.xlsx 4 "F0 in N" "f1 in Hz" "f1 in Hz" 0.03 0.01

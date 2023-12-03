@@ -167,7 +167,7 @@ class Guitarstring:
 
         std = np.sqrt(np.diag(pcov))
 
-        return  "popt:", popt, "std:" , std, r_square
+        return  "popt:", popt, "std:" , std, "R_square:",  r_square
 
 
 ############
