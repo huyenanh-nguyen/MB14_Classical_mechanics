@@ -8,8 +8,11 @@ import pandas as pd
 from matplotlib.ticker import FormatStrFormatter
 from scipy.optimize import curve_fit
 
-def linearfit(x, m):
-    return m * x 
+def linearfit(x, m, b):
+    return m * x + b
+
+def originfit(x, m):
+    return m * x
 
 # terminal script:
 
@@ -35,7 +38,32 @@ if __name__ == "__main__":
 
     roundnum = 3
     string = Guitarstring(excelpath)
+    data = string.excel_dataframes()[taskindex]
+    x_value = data["F0 in N"] 
+    y_value = [np.sqrt(data["f1 in Hz"][i]) for i in range(len(x_value))]
 
     print(string.resonancefit_params(taskindex, x_column, y_column))
+
+    popt, pcov = curve_fit(linearfit, x_value, y_value)
+    residuals = y_value - linearfit(np.asarray(x_value), *popt)
+    ss_res = np.sum(residuals ** 2)
+    ss_total = np.sum((y_value - np.mean(y_value)) ** 2)
+    r_square = 1 - (ss_res / ss_total)
+
+
+    ppt, cov = curve_fit(originfit, x_value, y_value)
+
+    print(popt, "std:", np.sqrt(np.diag(pcov)), r_square)
+    print("_____________________________________")
+    print(ppt, "std:", np.sqrt(np.diag(cov)))
+
+
+
+    fig = plt.figure()
+
+    plt.scatter(x = x_value, y = y_value, marker = ".")
+    plt.plot(x_value, originfit(x_value, np.array(popt[0])), color = "tab:orange")
+
+    plt.show()
 
     # python3 runtask4.py M12_Saitenschwingung.xlsx 4 "F0 in N" "f1 in Hz" "f1 in Hz" 0.03 0.01
