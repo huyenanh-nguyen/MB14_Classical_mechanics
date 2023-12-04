@@ -62,7 +62,8 @@ if __name__ == "__main__":
     fig = plt.figure()
 
     plt.scatter(x = x_value, y = y_value, marker = ".")
-    plt.plot(x_value, originfit(x_value, np.array(popt[0])), color = "tab:orange")
+    plt.plot(x_value, originfit(x_value, np.array(ppt[0])), color = "tab:orange")
+    plt.plot(x_value, linearfit(x_value, np.array(popt[0]), np.array(popt[1])), color = "tab:blue")
 
     plt.show()
 
