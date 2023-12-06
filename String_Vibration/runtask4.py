@@ -53,9 +53,9 @@ if __name__ == "__main__":
 
     ppt, cov = curve_fit(originfit, x_value, y_value)
 
-    print(popt, "std:", np.sqrt(np.diag(pcov)), r_square)
+    print("intercept:", popt, "std:", np.sqrt(np.diag(pcov)), r_square)
     print("_____________________________________")
-    print(ppt, "std:", np.sqrt(np.diag(cov)))
+    print("origin:",ppt, "std:", np.sqrt(np.diag(cov)))
 
 
 
