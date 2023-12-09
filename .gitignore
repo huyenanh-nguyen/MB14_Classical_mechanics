@@ -60,3 +60,5 @@ Temporary Items
 .pytest_cache
 .Pendulum/pytest_cache
 results_teammember/
+
+.String_Vibration/pytest_cache
