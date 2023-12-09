@@ -33,7 +33,7 @@ if __name__ == "__main__":
     systematic_error_ruler = args.systematic_error_ruler
 
 
-    roundnum = 3
+    roundnum = 2
     string = Guitarstring(excelpath)
 
     
@@ -103,15 +103,15 @@ if __name__ == "__main__":
     # combined plots
 
     legendtext_1 =(
-            "f(M:" + f"{mass[0]: 0.1f} kg ) = (" + f"{slope[0] : .3f} \u00B1" + f"{std_slope[0] : .3f} ) n" + 
+            "f(M:" + f"{mass[0]: 0.1f} kg ) = (" + f"{slope[0] : .2f} \u00B1" + f"{std_slope[0] : .2f} ) n" + 
             "\n$R^2$ = " + f"{fit_params[0]['R_Square'][0] : 0.4f}"
             )
     legendtext_2 =(
-            "f(M:" + f"{mass[1]: 0.1f} kg ) = (" + f"{slope[1] : .3f} \u00B1" + f"{std_slope[1] : .3f} ) n" + 
+            "f(M:" + f"{mass[1]: 0.1f} kg ) = (" + f"{slope[1] : .2f} \u00B1" + f"{std_slope[1] : .2f} ) n" + 
             "\n$R^2$ = " + f"{fit_params[1]['R_Square'][0] : 0.4f}"
             )
     legendtext_3 =(
-            "f(M:" + f"{mass[2]: 0.1f} kg ) = (" + f"{slope[2] : .3f} \u00B1" + f"{std_slope[2] : .3f} ) n" + 
+            "f(M:" + f"{mass[2]: 0.1f} kg ) = (" + f"{slope[2] : .2f} \u00B1" + f"{std_slope[2] : .2f} ) n" + 
             "\n$R^2$ = " + f"{fit_params[2]['R_Square'][0] : 0.4f}"
             )
     

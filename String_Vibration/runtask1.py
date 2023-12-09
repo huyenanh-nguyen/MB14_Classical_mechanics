@@ -54,7 +54,7 @@ if __name__ == "__main__":
     print("_______________________________________________________")
     print(" ")
 
-    roundnum = 3
+    roundnum = 2
     # fundemental frequency and propagation speed of the vibration
 
     print("_______________________________________________________")
@@ -66,8 +66,8 @@ if __name__ == "__main__":
 
     print("slope: ", round(slope, roundnum),u" \u00B1 ", round(fit_params["std_slope"][0], roundnum), " Hz")
     print("c = ", round(c, roundnum), " m/s")  
-    print("µ(f0 / c^2) = ", round(f0 /c ** 2, roundnum), " kg/m")
-    print("µ(slope,script) = ", round((f0 /(slope ** 2 * 4 * stringlength ** 2)), roundnum), " kg/m")
+    print("µ(f0 / c^2) = ", round(f0 /c ** 2, 6), " kg/m")
+    print("µ(slope,script) = ", round((f0 /(slope ** 2 * 4 * stringlength ** 2)), 6), " kg/m")
 
     print(" ")
     print("_______________________________________________________")
@@ -97,7 +97,7 @@ if __name__ == "__main__":
     plt.scatter(x = mode, y = frequence, marker = ".")
 
     plt.plot(x_value, linearfit(x_value, np.array(slope)), label = legendtext, color = "tab:orange")
-    plt.errorbar(x = mode, y= frequence, yerr = np.repeat(0.3, len(dataset["L in m"])),fmt=' ', capsize=3, color = "dimgrey")
+    # plt.errorbar(x = mode, y= frequence, yerr = np.repeat(0.3, len(dataset["L in m"])),fmt=' ', capsize=3, color = "dimgrey")
 
     ax.set_ylim(ymin=0)
     ax.set_xlim(xmin=0)
