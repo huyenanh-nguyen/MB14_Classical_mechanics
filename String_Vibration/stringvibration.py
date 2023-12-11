@@ -168,6 +168,24 @@ class Guitarstring:
         std = np.sqrt(np.diag(pcov))
 
         return  "popt:", popt, "std:" , std, "R_square:",  r_square
+    
+    def std_mu_and_c(self, L: float, f: float, c : float, f0 : float, delta_f: float, delta_L: float, delta_f0 : float):
+        """_summary_
+
+        Args:
+            L (float): stringlength
+            f (float): frequence
+            c (float): _description_
+            f0 (float): tension
+            delta_f (float): _description_
+            delta_L (float): _description_
+            delta_f0 (float): _description_
+        """
+
+        delta_c = np.sqrt( (2 * L * delta_f)**2 + (f * delta_L)**2 )
+        delta_mu = np.sqrt( (-2 * f0 * delta_c)**2 + (c**(-2) * delta_f0)**2 )
+
+        return delta_c, delta_mu
 
 
 ############
