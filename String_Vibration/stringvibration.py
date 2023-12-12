@@ -181,10 +181,8 @@ class Guitarstring:
             delta_L (float): _description_
             delta_f0 (float): _description_
         """
-
-        delta_c = np.sqrt( (2 * L * delta_f)**2 + (f * delta_L)**2 )
-        delta_mu = np.sqrt( (-2 * f0 * delta_c)**2 + (c**(-2) * delta_f0)**2 )
-
+        delta_c = np.sqrt( ((2 * (L) * delta_f)**2) + ((f * delta_L)**2) )
+        delta_mu = np.sqrt( ((-2 * f0 * delta_c)**2) + ((c**(-2) * delta_f0)**2) )
         return delta_c, delta_mu
 
 

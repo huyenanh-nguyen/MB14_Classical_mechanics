@@ -51,6 +51,8 @@ if __name__ == "__main__":
     stringlength = [dataset[i]["L in m"].unique()[0] for i in range(3)]    # length of the string
     mass = [dataset[i]["M in kg"].unique()[0] for i in range(3)]
     f0 = [dataset[i]["F0 in N"].unique()[0] for i in range(3)]
+    f = [dataset[i]["fn in Hz"].unique()[0] for i in range(3)]
+
     print("_______________________________________________________")
     print(" ")
     print(" Task 2 ")
@@ -61,17 +63,24 @@ if __name__ == "__main__":
 
     # f0 /c ** 2
     fit_dict = {"slope" : {}, "c" : {}, "µ" : {}, "M" : {}, "F0" : {}}
+    c = []
     for i in range(3):
         fit_dict["slope"][i] =  f"{slope[i] : .3f} \u00B1" + f"{std_slope[i] : .3f} Hz"
         fit_dict["c"][i] = f"{slope[i] * 2 * stringlength[i] : .3f} m/s"
         fit_dict["µ"][i] = f"{f0[i] / (slope[i] * 2 * stringlength[i]) ** 2: .3f} kg/m"
         fit_dict["M"][i] = f"{mass[i] : .3f} kg"
         fit_dict["F0"][i] = f"{f0[i] : .3f} kg"
+        c.append(slope[i] * 2 * stringlength[i])
 
     fit_df = pd.DataFrame(fit_dict)
     print(" ")
     print("_______________________________________________________")
     print(fit_df)
+
+    stdev_mu_c = []
+    for i in range(3):
+        stdev_mu_c.append(string.std_mu_and_c(stringlength[i], f[i], c[i],f0[i],0.03, 0.01, std_slope[i]))
+    print(stdev_mu_c)
 
     # individual plots
 
