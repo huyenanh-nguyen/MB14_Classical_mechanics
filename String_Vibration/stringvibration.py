@@ -184,6 +184,12 @@ class Guitarstring:
         delta_c = np.sqrt( ((2 * (L) * delta_f)**2) + ((f * delta_L)**2) )
         delta_mu = np.sqrt( ((-2 * f0 * delta_c)**2) + ((c**(-2) * delta_f0)**2) )
         return delta_c, delta_mu
+    
+    def mu_c_pt2(self, M, c, L, f1, delta_f1, delta_L):
+        delta_c = np.sqrt( (2* L * delta_f1)**2 + (2 * f1 * delta_L)**2 )
+        delta_mu = np.sqrt( (-2 * M * 9.81 * (c)**(-3) * delta_c)**2 )
+        
+        return delta_c, delta_mu
 
 
 ############
