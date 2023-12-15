@@ -86,10 +86,10 @@ if __name__ == "__main__":
 
     breakpoint()
 
-    stdev_mu_c = []
-    for i in range(3):
-        stdev_mu_c.append(string.std_mu_and_c(stringlength[i], f[i], c[i],f0[i],0.03, 0.01, std_slope[i]))
-    print(stdev_mu_c)
+    # stdev_mu_c = []
+    # for i in range(3):
+    #     stdev_mu_c.append(string.std_mu_and_c(stringlength[i], f[i], c[i],f0[i],0.03, 0.01, std_slope[i]))
+    # print(stdev_mu_c)
 
     # individual plots
 

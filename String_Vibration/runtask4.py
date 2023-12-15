@@ -65,6 +65,12 @@ if __name__ == "__main__":
     plt.plot(x_value, originfit(x_value, np.array(ppt[0])), color = "tab:orange")
     plt.plot(x_value, linearfit(x_value, np.array(popt[0]), np.array(popt[1])), color = "tab:blue")
 
+    x.set_ylim(ymin=0)
+    ax.set_xlim(xmin=0)
+    plt.legend(loc = 'upper left')
+    plt.xlabel("L in m", fontsize=12)
+    plt.ylabel(r'$\frac{1}{f_1}$ in $\frac{1}{Hz}$', fontsize=12)
+
     plt.show()
 
     # python3 runtask4.py M12_Saitenschwingung.xlsx 4 "F0 in N" "f1 in Hz" "f1 in Hz" 0.03 0.01
