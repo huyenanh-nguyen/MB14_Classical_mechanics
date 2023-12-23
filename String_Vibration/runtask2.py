@@ -84,8 +84,6 @@ if __name__ == "__main__":
         stdev_mu_c_2.append(string.mu_c_pt2(mass[i], c[i], stringlength[i], slope[i], delta_total_f1[i], 0.01))
     print(stdev_mu_c_2)
 
-    breakpoint()
-
     # stdev_mu_c = []
     # for i in range(3):
     #     stdev_mu_c.append(string.std_mu_and_c(stringlength[i], f[i], c[i],f0[i],0.03, 0.01, std_slope[i]))
