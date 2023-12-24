@@ -33,7 +33,7 @@ if __name__ == "__main__":
     systematic_error_ruler = args.systematic_error_ruler
 
 
-    # some standard parameter
+    # some standard parameter and raw data variables
     roundnum = 2
     string = Guitarstring(excelpath)    # calling class
 
@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
     statistics = [Statistics(statisticset[i]) for i in range(3)]    # for standard deviation
     dataset = string.excel_dataframes()[taskindex]     # the three tabels with the raw data as list
-    
+
     fit_params = string.resonancefit_params(taskindex, x_column, y_column)
 
     slope = [fit_params[i]["slope"][0] for i in range(3)]  # slope of the fit
@@ -52,6 +52,33 @@ if __name__ == "__main__":
     mass = [dataset[i]["M in kg"].unique()[0] for i in range(3)]
     f0 = [dataset[i]["F0 in N"].unique()[0] for i in range(3)]
     f = [dataset[i]["fn in Hz"].unique()[0] for i in range(3)]
+    
+    
+    
+    
+    # f0 /c ** 2
+    fit_dict = {"slope" : {}, "c" : {}, "µ" : {}, "M" : {}, "F0" : {}}
+    c = []
+    for i in range(3):
+        fit_dict["slope"][i] =  f"{slope[i] : .3f} \u00B1" + f"{std_slope[i] : .3f} Hz"
+        fit_dict["c"][i] = f"{slope[i] * 2 * stringlength[i] : .3f} m/s"
+        fit_dict["µ"][i] = f"{f0[i] / (slope[i] * 2 * stringlength[i]) ** 2: .3f} kg/m"
+        fit_dict["M"][i] = f"{mass[i] : .3f} kg"
+        fit_dict["F0"][i] = f"{f0[i] : .3f} kg"
+        c.append(slope[i] * 2 * stringlength[i])
+    
+    fit_df = pd.DataFrame(fit_dict)
+    print(" ")
+    print("_______________________________________________________")
+    print(fit_df)
+
+    delta_total_f1 = [np.sqrt( (0.03)**2 + (std_slope[i])** 2) for i in range(3)]
+
+    stdev_mu_c_2 = []
+    for i in range(3):
+        stdev_mu_c_2.append(string.mu_c_pt2(mass[i], c[i], stringlength[i], slope[i], delta_total_f1[i], 0.01))
+    print(stdev_mu_c_2)
+
 
 
 

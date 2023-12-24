@@ -189,7 +189,7 @@ class Guitarstring:
         delta_c = np.sqrt( (2* L * delta_f1)**2 + (2 * f1 * delta_L)**2 )
         delta_mu = np.sqrt( (-2 * M * 9.81 * (c)**(-3) * delta_c)**2 )
         
-        return delta_c, delta_mu
+        return "c:", delta_c, "µ:", delta_mu
 
 
 ############
