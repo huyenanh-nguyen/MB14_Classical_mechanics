@@ -62,7 +62,7 @@ if __name__ == "__main__":
     for i in range(3):
         fit_dict["slope"][i] =  f"{slope[i] : .3f} \u00B1" + f"{std_slope[i] : .3f} Hz"
         fit_dict["c"][i] = f"{slope[i] * 2 * stringlength[i] : .3f} m/s"
-        fit_dict["µ"][i] = f"{f0[i] / (slope[i] * 2 * stringlength[i]) ** 2: .3f} kg/m"
+        fit_dict["µ"][i] = f"{f0[i] / (slope[i] * 2 * stringlength[i]) ** 2: .4f} kg/m"
         fit_dict["M"][i] = f"{mass[i] : .3f} kg"
         fit_dict["F0"][i] = f"{f0[i] : .3f} kg"
         c.append(slope[i] * 2 * stringlength[i])
