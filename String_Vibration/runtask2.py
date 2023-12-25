@@ -80,6 +80,49 @@ if __name__ == "__main__":
     print(stdev_mu_c_2)
 
 
+    # combined plots
+
+    legendtext_1 =(
+            "f$_{M = 1.0kg}$(n) = ("+ f"{slope[0] : .2f} \u00B1" + f"{std_slope[0] : .2f} ) n" + 
+            "\n$R^2$ = " + f"{fit_params[0]['R_Square'][0] : 0.4f}"
+            )
+    legendtext_2 =(
+            "f$_{M = 2.0kg}$(n) = ("+ f"{slope[1] : .2f} \u00B1" + f"{std_slope[1] : .2f} ) n" + 
+            "\n$R^2$ = " + f"{fit_params[1]['R_Square'][0] : 0.4f}"
+            )
+    legendtext_3 =(
+            "f$_{M = 3.0kg}$(n) = ("+ f"{slope[2] : .2f} \u00B1" + f"{std_slope[2] : .2f} ) n" + 
+            "\n$R^2$ = " + f"{fit_params[2]['R_Square'][0] : 0.4f}"
+            )
+    
+    x_value = np.linspace(0, dataset[0]["n"].max())
+
+    frequence_1 = dataset[0]["fn in Hz"]
+    frequence_2 = dataset[1]["fn in Hz"]
+    frequence_3 = dataset[2]["fn in Hz"]
+
+    mode_1 = dataset[0]["n"]
+    mode_2 = dataset[1]["n"]
+    mode_3 = dataset[2]["n"]
+    fig = plt.figure()
+    ax = fig.add_subplot()
+    plt.scatter(x = mode_1, y = frequence_1, marker = ".")
+    plt.scatter(x = mode_2, y = frequence_2, marker = ".")
+    plt.scatter(x = mode_3, y = frequence_3, marker = ".")
+
+    plt.plot(x_value, linearfit(x_value, np.array(slope[0])), label = legendtext_1)
+    plt.plot(x_value, linearfit(x_value, np.array(slope[1])), label = legendtext_2)
+    plt.plot(x_value, linearfit(x_value, np.array(slope[2])), label = legendtext_3)
+    
+    ax.set_ylim(ymin=0)
+    ax.set_xlim(xmin=0)
+    plt.legend(loc = 'upper left')
+    plt.xlabel("n", fontsize=12)
+    plt.ylabel("$f_n$ in Hz", fontsize=12)
+    
+    plt.show()
+
+
 
 
     # python3 runtask2.py M12_Saitenschwingung.xlsx 2 "n" "fn in Hz" "fn in Hz" 0.03 0.01
