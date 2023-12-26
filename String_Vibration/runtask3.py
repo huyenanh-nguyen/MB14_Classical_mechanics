@@ -75,6 +75,15 @@ if __name__ == "__main__":
     print("_______________________________________________________")
     print(" ")
 
+    # def mu_c_pt2(L, f1, delta_f1, delta_L):
+    #     delta_c = np.sqrt( (2* L * delta_f1)**2 + (2 * f1 * delta_L)**2 )
+    #     return delta_c
+
+
+
+
+
+
     legendtext =(
     "f(n) = (" + f"{popt[0] : .3f} \u00B1" + f"{std[0] : .3f} ) n" + 
     "\n$R^2$ = " + f"{r_square : 0.3f}"
