@@ -79,7 +79,7 @@ if __name__ == "__main__":
     print(" ")
 
     def mu_c_pt2(slope, delta_slope):
-        delta_c = np.sqrt( ((-2 / (slope)**2)**2) * delta_slope )
+        delta_c = np.sqrt( ((-2 / ((slope)**2)) * delta_slope)** 2 )
         return delta_c
     
     print("∆c:", mu_c_pt2(slope, std_slope))
