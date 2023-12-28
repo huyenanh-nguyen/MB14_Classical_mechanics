@@ -62,6 +62,8 @@ if __name__ == "__main__":
     std_slope = std[0]
     stringlength = dataset["L in m"].unique()[0]    # length of the string
     mass = dataset["M in kg"].unique()[0]
+
+    c = 2 / slope
     
     print("_______________________________________________________")
     print(" ")
@@ -69,15 +71,19 @@ if __name__ == "__main__":
     print(" ")
     print("Fit Parameters:")
     
-    fit_dict = {"slope" : f"{slope: .3f} \u00B1 " + f"{std_slope: .3f} Hz" , "c": f"{2 / slope : 0.3f}", "M" : f"{mass: 0.3f} kg"}
+    fit_dict = {"slope" : f"{slope: .3f} \u00B1 " + "{:.2e}".format(std_slope) + "Hz" , "c": f"{2 / slope : 0.3f}", "M" : f"{mass: 0.3f} kg"}
     print(pd.DataFrame(fit_dict, index=[0]))
     print(" ")
+    print("c:", c)
     print("_______________________________________________________")
     print(" ")
 
-    # def mu_c_pt2(L, f1, delta_f1, delta_L):
-    #     delta_c = np.sqrt( (2* L * delta_f1)**2 + (2 * f1 * delta_L)**2 )
-    #     return delta_c
+    def mu_c_pt2(slope, delta_slope):
+        delta_c = np.sqrt( ((-2 / (slope)**2)**2) * delta_slope )
+        return delta_c
+    
+    print("∆c:", mu_c_pt2(slope, std_slope))
+    
 
 
 
@@ -85,7 +91,7 @@ if __name__ == "__main__":
 
 
     legendtext =(
-    "f(n) = (" + f"{popt[0] : .3f} \u00B1" + f"{std[0] : .3f} ) n" + 
+    "f(n) = (" + f"{popt[0] : .3f} \u00B1 " + "{:.2e}".format(std_slope) +" ) n" + 
     "\n$R^2$ = " + f"{r_square : 0.3f}"
     )
 
