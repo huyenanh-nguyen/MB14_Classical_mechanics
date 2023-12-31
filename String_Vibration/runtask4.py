@@ -70,23 +70,25 @@ if __name__ == "__main__":
     ss_total = np.sum((y_value - np.mean(y_value)) ** 2)
     r_square = 1 - (ss_res / ss_total)
 
-    print("intercept:", popt, "std:", np.sqrt(np.diag(pcov)), r_square)
+    print("slope:", popt, "std:", np.sqrt(np.diag(pcov)), r_square)
     print("_____________________________________")
 
 
 
-    # fig = plt.figure()
+    fig = plt.figure()
+    ax = fig.add_subplot()
 
-    # plt.scatter(x = x_value, y = y_value, marker = ".")
-    # plt.plot(x_value, originfit(x_value, np.array(ppt[0])), color = "tab:orange")
-    # plt.plot(x_value, linearfit(x_value, np.array(popt[0]), np.array(popt[1])), color = "tab:blue")
+    x_line = np.linspace(0, np.array(x_value).max())
 
-    # # ax.set_ylim(ymin=0)
-    # # ax.set_xlim(xmin=0)
-    # plt.legend(loc = 'upper left')
-    # plt.xlabel(r'$\sqrt{F_0}$ in $\sqrt{N}$', fontsize=12)
-    # plt.ylabel(r'$f_1$ in Hz', fontsize=12)
+    plt.scatter(x = x_value, y = y_value, marker = ".")
+    plt.plot(x_line, originfit(x_line, np.array(popt[0])), color = "tab:orange")
 
-    # plt.show()
+    ax.set_ylim(ymin=0)
+    ax.set_xlim(xmin=0)
+    plt.legend(loc = 'upper left')
+    plt.xlabel(r'$\sqrt{F_0}$ in $\sqrt{N}$', fontsize=12)
+    plt.ylabel(r'$f_1$ in Hz', fontsize=12)
+
+    plt.show()
 
     # python3 runtask4.py M12_Saitenschwingung.xlsx 4 "sqrt(F0) in sqrt(N)" "f1 in Hz" "f1 in Hz" 0.03 0.01
