@@ -8,9 +8,6 @@ import pandas as pd
 from matplotlib.ticker import FormatStrFormatter
 from scipy.optimize import curve_fit
 
-def linearfit(x, m, b):
-    return m * x + b
-
 def originfit(x, m):
     return m * x
 
@@ -41,9 +38,22 @@ if __name__ == "__main__":
     data = string.excel_dataframes()[taskindex]
     y_value = data["f1 in Hz"]
     x_value = [np.sqrt(data["F0 in N"][i]) for i in range(len(y_value))]
+    L = data["L in m"].unique()  # length of the string
 
-    
-    print(string.resonancefit_params(taskindex, x_column, y_column))
+
+    # printing the value like slope, std and R^2
+    fitparams = string.resonancefit_params(taskindex, x_column, y_column)
+    print(fitparams)
+    print(' ')
+    print('___________________________________')
+    print(' ')
+
+    # calculating µ and the std.
+    µ = ( 1/(fitparams["slope"] * 2 * L) ) **2
+    print(µ)
+
+
+    #plotting Value
 
 
 
