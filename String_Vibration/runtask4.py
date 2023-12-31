@@ -73,7 +73,10 @@ if __name__ == "__main__":
     print("slope:", popt, "std:", np.sqrt(np.diag(pcov)), r_square)
     print("_____________________________________")
 
-
+    legendtext =(
+    "f(n) = (" + f"{popt[0] : .2f} \u00B1 " + f"{std_slope[0] : .2f}" +" ) n" + 
+    "\n$R^2$ = " + f"{r_square : 0.4f}"
+    )
 
     fig = plt.figure()
     ax = fig.add_subplot()
@@ -81,7 +84,9 @@ if __name__ == "__main__":
     x_line = np.linspace(0, np.array(x_value).max())
 
     plt.scatter(x = x_value, y = y_value, marker = ".")
-    plt.plot(x_line, originfit(x_line, np.array(popt[0])), color = "tab:orange")
+    plt.plot(x_line, originfit(x_line, np.array(popt[0])), color = "tab:orange", label = legendtext)
+
+
 
     ax.set_ylim(ymin=0)
     ax.set_xlim(xmin=0)

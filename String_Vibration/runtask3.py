@@ -92,7 +92,7 @@ if __name__ == "__main__":
 
     legendtext =(
     "f(n) = (" + f"{popt[0] : .3f} \u00B1 " + "{:.2e}".format(std_slope) +" ) n" + 
-    "\n$R^2$ = " + f"{r_square : 0.3f}"
+    "\n$R^2$ = " + f"{r_square : 0.4f}"
     )
 
     x_value = np.linspace(0, dataset["L in m"].max())
