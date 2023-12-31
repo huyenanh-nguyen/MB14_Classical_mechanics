@@ -43,41 +43,35 @@ if __name__ == "__main__":
 
     # printing the value like slope, std and R^2
     fitparams = string.resonancefit_params(taskindex, x_column, y_column)
+    slope = fitparams["slope"]
+    std_slope = fitparams["std_slope"]
     print(fitparams)
     print(' ')
     print('___________________________________')
     print(' ')
 
     # calculating µ and the std.
-    µ = ( 1/(fitparams["slope"] * 2 * L) ) **2
-    print(µ)
+    µ = ( 1/(slope * 2 * L) ) **2
+    print("µ: ", µ)
+
+    delta_µ = np.sqrt( ( (2 * (1/slope * 2 * L))**2 * (1 / (slope**2 * 2 * L)) * std_slope)**2 + ( (2 * (1/slope * 2 * L))**2 * (1 / (slope * 2 * L **2)) * systematic_error_ruler)**2)
+    print("delta_mu: ", delta_μ)
+
+    print(' ')
+    print('___________________________________')
+    print(' ')
 
 
     #plotting Value
 
+    popt, pcov = curve_fit(originfit, x_value, y_value)
+    residuals = y_value - originfit(np.asarray(x_value), *popt)
+    ss_res = np.sum(residuals ** 2)
+    ss_total = np.sum((y_value - np.mean(y_value)) ** 2)
+    r_square = 1 - (ss_res / ss_total)
 
-
-    
-
-
-
-
-
-
-
-
-    # popt, pcov = curve_fit(linearfit, x_value, y_value)
-    # residuals = y_value - linearfit(np.asarray(x_value), *popt)
-    # ss_res = np.sum(residuals ** 2)
-    # ss_total = np.sum((y_value - np.mean(y_value)) ** 2)
-    # r_square = 1 - (ss_res / ss_total)
-
-
-    # ppt, cov = curve_fit(originfit, x_value, y_value)
-
-    # print("intercept:", popt, "std:", np.sqrt(np.diag(pcov)), r_square)
-    # print("_____________________________________")
-    # print("origin:",ppt, "std:", np.sqrt(np.diag(cov)))
+    print("intercept:", popt, "std:", np.sqrt(np.diag(pcov)), r_square)
+    print("_____________________________________")
 
 
 
