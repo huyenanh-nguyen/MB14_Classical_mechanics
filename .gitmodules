@@ -4,3 +4,6 @@
 [submodule "String_Vibration/MathKit"]
 	path = String_Vibration/MathKit
 	url = git@github.com:huyenanh-nguyen/MathKit.git
+[submodule "Wheatstone_bridge/MathKit"]
+	path = Wheatstone_bridge/MathKit
+	url = https://github.com/huyenanh-nguyen/MathKit.git
