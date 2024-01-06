@@ -26,12 +26,12 @@ if __name__ == "__main__":
 
 
     excelpath = PurePath(str(Path.cwd()) + "/" + (args.excelpath))
-    taskindex = args.taskindex
+    taskindex = args.taskindex  # for task 4 it is 4
     x_column = args.x_column
     y_column = args.y_column
     valueset = args.valueset
-    systematic_error_frequence = args.systematic_error_frequence
-    systematic_error_ruler = args.systematic_error_ruler
+    systematic_error_frequence = args.systematic_error_frequence    # about 0.03 Hz
+    systematic_error_ruler = args.systematic_error_ruler    # about 0.01 m
 
     roundnum = 3
     string = Guitarstring(excelpath)
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     # calculating µ and the std.
     µ = ( 1/(slope * 2 * L) ) **2
     print("µ: ", µ)
-
+    # error estimation of µ
     delta_µ = np.sqrt( ( (2 * (1/slope * 2 * L))**2 * (1 / (slope**2 * 2 * L)) * std_slope)**2 + ( (2 * (1/slope * 2 * L))**2 * (1 / (slope * 2 * L **2)) * systematic_error_ruler)**2)
     print("delta_mu: ", delta_μ)
 

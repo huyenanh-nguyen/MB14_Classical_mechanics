@@ -25,7 +25,7 @@ if __name__ == "__main__":
 
 
     excelpath = PurePath(str(Path.cwd()) + "/" + (args.excelpath))
-    taskindex = args.taskindex
+    taskindex = args.taskindex  # it is 2 and it has three tables -> 3 datasets in it
     x_column = args.x_column
     y_column = args.y_column
     valueset = args.valueset

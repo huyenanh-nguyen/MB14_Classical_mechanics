@@ -13,3 +13,6 @@ class Wheatstone:
             excelpath (Path): PAth to my excelfile
         """
         self.excelpath = excelpath
+    
+
+    
