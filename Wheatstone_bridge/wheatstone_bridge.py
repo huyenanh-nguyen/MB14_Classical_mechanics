@@ -25,13 +25,13 @@ class Wheatstone:
         excel = self.excelpath
         sheetname1 = self.excelsheet_task1
         sheetname2 = self.excelsheet_task2
-        sheet1 = pd.read_excel(excel, sheet_name = sheetname1) 
-        sheet2 = pd.read_excel(excel, sheet_name = sheetname2)
+        sheet1 = pd.read_excel(excel, sheet_name = sheetname1, skiprows= 1).dropna(axis = 1, how = "all")
+        sheet2 = pd.read_excel(excel, sheet_name = sheetname2, skiprows= 1).dropna(axis = 1, how = "all")
 
         return sheet1, sheet2   
     
 
-    def task1(self):
+    def task1_dataframe(self):
         """
         In Task 1 we should do a scatterplot of the volatage and current.
         while the lecturer set a volatage at the voltage supply, we measured the voltage and the current with a voltmeter and an Ammeter and we want
@@ -42,7 +42,16 @@ class Wheatstone:
         Returns:
             Dataframe: returns Dataframe with the current- and voltage-data
         """
-        sheet_df = self.excelsheet_to_dataframe()[1]
+        sheet_df = self.excelsheet_to_dataframe()[0]
+        sheet_df.columns = [0,1,2,3,4,5]
+
+        spannungsrichtig = sheet_df.loc[0:, [0,1,2]]
+        spannungsrichtig.columns = spannungsrichtig.iloc[0]
+        
+
+        return spannungsrichtig
+
+
 
 
 
@@ -55,6 +64,6 @@ sheet2 = "Aufgabe 2"
 
 results = Wheatstone(excelpath = excelpath, task1 = sheet1, task2 = sheet2)
 
-print(results.excelsheet_to_dataframe())
+print(results.task1_dataframe())
 
     
