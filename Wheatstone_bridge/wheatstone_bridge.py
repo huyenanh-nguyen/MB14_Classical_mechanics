@@ -43,9 +43,9 @@ class Wheatstone:
             Dataframe: returns Dataframe with the current- and voltage-data
         """
         sheet_df = self.excelsheet_to_dataframe()[0]
-        sheet_df.columns = [0,1,2,3,4,5]
-
-        spannungsrichtig = sheet_df.loc[0:, [0,1,2]]
+        columnheader = [sheet_df.columns]
+   
+        spannungsrichtig = sheet_df.loc[0:, [columnheader[0][i] for i in range(3)]]
         spannungsrichtig.columns = spannungsrichtig.iloc[0]
         
 
