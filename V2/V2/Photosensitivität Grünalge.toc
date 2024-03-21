@@ -1,0 +1,8 @@
+\babel@toc {english}{}\relax 
+\contentsline {section}{\numberline {1}Einführung}{1}{section.1}%
+\contentsline {section}{\numberline {2}Versuchsdurchführung}{1}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Bewegungsmuster unterm Fluoreszenzmikroskop}{1}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Photometrische Bestimmung des Aktionsspektrum}{1}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}pH-Veränderung des Medium}{1}{subsection.2.3}%
+\contentsline {section}{\numberline {3}Ergebnis}{2}{section.3}%
+\contentsline {section}{\numberline {4}Disskusion}{4}{section.4}%
